@@ -14,6 +14,7 @@ Chat in Polish unless the user asks for another language. Repository documentati
 - `docs/PRD.md` — product requirements and acceptance criteria
 - `docs/ADR/` — Architecture Decision Records
 - `docs/design-guidelines.md` — design system and tokens
+- `docs/research/<topic>/` — research reports (PL/EN Markdown + HTML), input for PRD/ADR
 
 ---
 
@@ -22,9 +23,15 @@ Chat in Polish unless the user asks for another language. Repository documentati
 ```
 app/                 Application built during the course (start: empty scaffold)
 assets/              Design tokens, logo, favicon
-docs/                PRD, ADR, design system
+docs/                PRD, ADR, design system, research reports (docs/research/)
+.agents/skills/      Project skills (committed; .claude/skills/ holds git-ignored symlinks)
 course-materials/    Notes, scripts, examples, research
 ```
+
+**Project skills** — read the `SKILL.md` before doing a matching task:
+- `.agents/skills/verified-research-report/` — fact-checked web research delegated to subagents, PL/EN report with charts in `docs/research/<topic>/`.
+
+When an output location (report, skill, other deliverable) is not given in the prompt or a skill, ask the user before writing; propose `docs/research/<topic>/` for reports and `.agents/skills/<name>/` (+ `.claude/skills/<name>` symlink) for skills.
 
 **Do not read `course-materials/` on your own.** It holds teaching examples from this and earlier courses: sample PRDs, ADRs, prompts and agent instructions. They are not requirements or conventions for this app. Do not browse, search or index it during normal work; open a file there only when the user names it or asks for course material.
 
