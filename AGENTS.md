@@ -30,6 +30,7 @@ course-materials/    Notes, scripts, examples, research
 
 **Project skills** — read the `SKILL.md` before doing a matching task:
 - `.agents/skills/verified-research-report/` — fact-checked web research delegated to subagents, PL/EN report with charts in `docs/research/<topic>/`.
+- `.agents/skills/price-check/` — product prices from current retail flyers per chain, appended to a CSV in `weryfikacja_cen/<Product>/`.
 
 When an output location (report, skill, other deliverable) is not given in the prompt or a skill, ask the user before writing; propose `docs/research/<topic>/` for reports and `.agents/skills/<name>/` (+ `.claude/skills/<name>` symlink) for skills.
 
