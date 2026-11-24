@@ -100,7 +100,7 @@ Publish with `Artifact` (icon `chart`). Tell the user the artifact is private un
   so never plan a step that depends on them.
 - **New or changed skills.** If the session ends with a new skill and the prompt
   names no location, ask. The project convention (`.gitignore` and `AGENTS.md`) is:
-  - put the skill in `.agents/skills/<name>/` (committed, tool-neutral);
+  - put the skill in `.agents/skills/<name>/` (tool-neutral) and add `!.agents/skills/<name>/` to `.gitignore`, because the folder is ignored by default (installed skills are pinned in `skills-lock.json` instead);
   - add a symlink in `.claude/skills/<name>`, which is git-ignored and serves only for Claude Code discovery;
   - add a one-line pointer in the `AGENTS.md` "Project skills" section, so Codex and Copilot find it too.
   Read `.gitignore` before choosing a path.

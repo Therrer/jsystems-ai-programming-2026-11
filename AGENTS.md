@@ -24,7 +24,7 @@ Chat in Polish unless the user asks for another language. Repository documentati
 app/                 Application built during the course (start: empty scaffold)
 assets/              Design tokens, logo, favicon
 docs/                PRD, ADR, design system, research reports (docs/research/)
-.agents/skills/      Project skills (committed; .claude/skills/ holds git-ignored symlinks)
+.agents/skills/      Agent skills: installed ones are git-ignored and pinned in skills-lock.json; project skills are committed via !-exceptions in .gitignore (.claude/skills/ holds git-ignored symlinks)
 course-materials/    Notes, scripts, examples, research
 ```
 
@@ -32,7 +32,7 @@ course-materials/    Notes, scripts, examples, research
 - `.agents/skills/verified-research-report/` — fact-checked web research delegated to subagents, PL/EN report with charts in `docs/research/<topic>/`.
 - `.agents/skills/price-check/` — product prices from current retail flyers per chain, appended to a CSV in `weryfikacja_cen/<Product>/`.
 
-When an output location (report, skill, other deliverable) is not given in the prompt or a skill, ask the user before writing; propose `docs/research/<topic>/` for reports and `.agents/skills/<name>/` (+ `.claude/skills/<name>` symlink) for skills.
+When an output location (report, skill, other deliverable) is not given in the prompt or a skill, ask the user before writing; propose `docs/research/<topic>/` for reports and `.agents/skills/<name>/` (+ `.claude/skills/<name>` symlink + a `!.agents/skills/<name>/` line in `.gitignore`) for skills. Installed third-party skills are not committed: `skills-lock.json` records their source, commit and hash.
 
 **Do not read `course-materials/` on your own.** It holds teaching examples from this and earlier courses: sample PRDs, ADRs, prompts and agent instructions. They are not requirements or conventions for this app. Do not browse, search or index it during normal work; open a file there only when the user names it or asks for course material.
 
