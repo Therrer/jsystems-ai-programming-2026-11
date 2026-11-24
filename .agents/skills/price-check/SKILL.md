@@ -73,3 +73,7 @@ and the price change versus previous rows in the CSV.
 | Flyer PDFs >10 MB, `curl` denied | Check permissions in Phase 0 |
 | Biedronka 18,99 zł/kg came from one aggregator, Monday only | Single-source or unusual values get `pewnosc=niska` and a note |
 | Branch was switched by another session before `git switch -c` | Check the current branch right before creating a branch or committing |
+| Run 2: image-only flyers were read by fetching each `blix.pl/.../gazetka/<id>/?pageNumber=N` (one page-image URL per fetch), then WebFetch on the `imgproxy.blix.pl/image/leaflet/...jpg?ext=webp&bucket=1200` URL and `Read` on the saved .webp | Put this method in agent prompts when text search finds nothing; chain CDNs (cdn.biedronka.pl) return 403 |
+| Run 2: gazetki.pl/oferty/<category>/<chain> lists dated past offers per chain | Use it for `historyczna` rows (trend context) |
+| Run 2: blix "Warzywa i owoce – przegląd cen" shows customer receipt prices ("kupione za"), not a flyer | Never record those as promo prices |
+| Run 2: the 18,99 zł Biedronka value from run 1 was not confirmed | Re-check single-source values on the next run before reporting a trend |
