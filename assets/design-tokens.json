@@ -1,0 +1,156 @@
+{
+  "$source": {
+    "url": "https://eurocash.pl/",
+    "extractedAt": "2026-11-25",
+    "viewport": "920px wide (desktop Chrome, headed)",
+    "note": "Values marked in $derived were not observed on the page and are inferred from the brand palette."
+  },
+  "colors": {
+    "brand": {
+      "primary": "#01983D",
+      "primaryDark": "#00813D",
+      "primaryDeep": "#005925",
+      "buttonGreen": "#358F42",
+      "accent": "#E67741",
+      "logoRed": "#EE3042",
+      "orange360": "#FF7800",
+      "lime360": "#71B739",
+      "error": "#EE3042",
+      "success": "#01983D"
+    },
+    "background": {
+      "default": "#FFFFFF",
+      "light": "#EDEDED",
+      "dark": "#3D4455",
+      "darker": "#2E3441",
+      "sidebar": "#01983D",
+      "overlay": "rgba(0, 0, 0, 0.3)"
+    },
+    "text": {
+      "primary": "#3D4455",
+      "secondary": "#2E3441",
+      "muted": "#6B7280",
+      "onDark": "#FFFFFF",
+      "onDarkSoft": "#F3F3F5",
+      "link": "#01983D",
+      "input": "#000000"
+    },
+    "$derived": ["brand.error", "brand.success", "text.muted"]
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "Roboto, sans-serif",
+      "secondary": "Figtree, Roboto, sans-serif"
+    },
+    "fontSource": {
+      "Roboto": "No @font-face on the site; relies on locally installed Roboto (load from Google Fonts in the app)",
+      "Figtree": "Google Fonts CDN (fonts.gstatic.com), weights 300-700; used only in a few banner elements"
+    },
+    "fontWeights": {
+      "extralight": 200,
+      "light": 300,
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    "fontSize": {
+      "xs": "13px",
+      "sm": "15px",
+      "base": "16px",
+      "md": "18px",
+      "lg": "28px",
+      "xl": "34px",
+      "display": "66px"
+    },
+    "lineHeight": {
+      "tight": "0.9",
+      "base": "1.15",
+      "relaxed": "1.5"
+    },
+    "headings": {
+      "h1": { "fontSize": "66px", "fontWeight": 700, "lineHeight": "60px", "color": "#FFFFFF", "textShadow": "on photo" },
+      "h2": { "fontSize": "34px", "fontWeight": 500, "lineHeight": "60px", "color": "#FFFFFF" },
+      "heroLink": { "fontSize": "28px", "fontWeight": 500, "color": "#FFFFFF" }
+    }
+  },
+  "spacing": {
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "20px",
+    "6": "24px",
+    "7": "28px",
+    "8": "32px"
+  },
+  "borderRadius": {
+    "none": "0px",
+    "md": "8px",
+    "leaf": "10px 0px",
+    "inputLeft": "8px 0px 0px 8px",
+    "inputRight": "0px 8px 8px 0px",
+    "full": "999px",
+    "circle": "50%"
+  },
+  "shadow": {
+    "searchBox": "0 0 10px 0 rgba(0, 0, 0, 0.3)"
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "backgroundColor": "#E67741",
+        "color": "#FFFFFF",
+        "border": "1px solid #E67741",
+        "padding": "13px 26px",
+        "borderRadius": "10px 0px",
+        "fontSize": "16px",
+        "fontWeight": 600,
+        "height": "46px",
+        "label": "Zarejestruj się"
+      },
+      "secondary": {
+        "backgroundColor": "#358F42",
+        "color": "#FFFFFF",
+        "border": "1px solid #358F42",
+        "padding": "13px 26px",
+        "borderRadius": "10px 0px",
+        "fontSize": "16px",
+        "fontWeight": 600,
+        "height": "46px",
+        "label": "Logowanie"
+      },
+      "textLink": {
+        "color": "#01983D",
+        "fontSize": "16px",
+        "fontWeight": 700,
+        "label": "Grupa Eurocash"
+      }
+    },
+    "header": {
+      "backgroundColor": "#FFFFFF",
+      "height": "100px",
+      "logoHeight": "50px"
+    },
+    "sidebar": {
+      "backgroundColor": "#01983D",
+      "width": "35px",
+      "position": "left edge, full page height"
+    },
+    "searchBar": {
+      "backgroundColor": "#2E3441",
+      "padding": "16px",
+      "title": { "color": "#FFFFFF", "fontSize": "18px", "fontWeight": 300, "label": "Sprawdź ofertę" },
+      "box": { "backgroundColor": "#FFFFFF", "borderRadius": "8px", "height": "53px", "boxShadow": "0 0 10px 0 rgba(0, 0, 0, 0.3)" },
+      "select": { "backgroundColor": "#EDEDED", "color": "#3D4455", "fontSize": "18px", "paddingLeft": "16px" },
+      "input": { "color": "#000000", "fontSize": "13px", "padding": "0 8px 0 14px" }
+    },
+    "footer": {
+      "backgroundColor": "#3D4455",
+      "padding": "0 16px",
+      "color": "#F3F3F5",
+      "heading": { "fontSize": "18px", "fontWeight": 600 },
+      "listItem": { "fontSize": "16px", "fontWeight": 200, "lineHeight": "24px" }
+    }
+  }
+}
