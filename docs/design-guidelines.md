@@ -13,6 +13,7 @@ Reference extracted from <https://eurocash.pl/> on 2026-11-25 (desktop Chrome, ~
 | [`assets/logo-eurocash360.svg`](../assets/logo-eurocash360.svg) | Secondary "eurocash360" logo with orange/lime arc (viewBox 155×40) |
 | [`assets/favicon.ico`](../assets/favicon.ico) | 32×32 favicon (PNG data in `.ico` file) |
 | [`assets/design-tokens.json`](../assets/design-tokens.json) | Design tokens (colors, type, spacing, radius, components) |
+| [`assets/homepage-grupaeurocash/`](../assets/homepage-grupaeurocash/) | Related corporate site <https://www.grupaeurocash.pl> (2026-11-25), split into 7 section screenshots `01-hero.png` … `07-stopka.png` (920 px wide, ≤ 942 px tall). Context only: a separate corporate style (red/green "EUROCASH Grupa" logo, colored cards); tokens above come from eurocash.pl |
 
 ## Colors
 
