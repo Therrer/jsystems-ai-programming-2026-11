@@ -49,6 +49,7 @@ course-materials/    Notes, scripts, examples, research
 1. For CLI syntax (`gh`, `glab`, `codex`, build tools), run the tool's built-in help first: `<tool> --help` or `<tool> <command> --help`.
 2. For library and framework APIs, use current documentation through Context7: the CLI (`npx ctx7@latest library …`, then `npx ctx7@latest docs …`) or, when configured, the MCP tools (`resolve-library-id`, then `query-docs`) and match it to the installed package version in the lockfile; major versions differ.
 3. Search the web last, and prefer the vendor's official pages.
+4. Delegate research that spans several libraries, long pages or many files to a subagent (for example Claude Code `Explore`, `general-purpose` or `web-fetch`) or to a CLI agent (for example an OpenCode run with a research-only brief), and keep only its conclusion with sources. The delegate follows the same order: `--help`, then Context7, then the web.
 
 ### TDD Rules
 For every feature and bug fix:
@@ -106,7 +107,7 @@ Verify only the scope relevant to your change. If the change affects runtime beh
 If you were started with a task brief (for example `.agent-briefs/<task>.md`), the brief defines your scope and overrides the workflow above where they differ:
 - Edit only the files the brief lists. Report anything else that needs changing instead of changing it.
 - Do not commit, push, install packages, start the app or do Manual QA; the coordinating agent does that.
-- Use the documentation excerpts in the brief; do not look up other documentation unless the brief allows it.
+- Start from the documentation excerpts in the brief. If a fact is missing, look it up in this order: the tool's `--help`, then Context7 (`npx --yes ctx7@latest library …`, then `npx --yes ctx7@latest docs …`; `--yes` avoids npx's interactive install prompt, which hangs headless runs). Workers have no web access; report anything still missing. List what you looked up in your report.
 - Run only the checks the brief names. Other agents may be editing other files at the same time, so report errors outside your files instead of fixing them.
 - Never weaken, skip or delete a test. If the brief contradicts the PRD, an ADR or a test, stop and report the contradiction.
 - Finish with the report the brief asks for: files changed, commands run with their results, contradictions and open questions.

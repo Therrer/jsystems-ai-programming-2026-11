@@ -11,6 +11,11 @@
 - **Roles:**
   - **O** = orchestrator, Claude Code Opus 5.5: decisions, briefs, acceptance, commits.
   - **W** = worker, OpenCode headless `openrouter/openai/gpt-6-luna`. It escalates to `gpt-6-luna-pro`, then to a Claude subagent.
+  - **Fallback workers:**
+    - OpenCode free models (e.g. `opencode/mimo-v2.6-flash-free`, `opencode/deepseek-v4.1-flash-free`) for budget fallback and research, used with repository code only. Today they return 401 because of a stored OpenCode credential, and H must fix it (runner guide).
+    - Claude Code subagents (`haiku`, escalating to `sonnet`).
+    - The checked availability of each agent is in the runner guide.
+  - **Research:** every agent follows AGENTS.md *Looking up tool and library facts*: `--help` first, then Context7 (`npx --yes ctx7@latest`), then the web (only where available; workers have none). O delegates broad research to Claude subagents or research-only OpenCode runs and keeps the conclusion with sources.
   - **R** = a fresh Claude Code review session.
   - **H** = the human.
 - **Runner guide:** [OpenCode headless workers](../agents/opencode-headless.md). T01 makes it operational.
@@ -160,6 +165,7 @@ Scope names modules. O writes the exact paths, commands, test inputs and expecte
 
 ## 6. Execution protocol
 
+0. **Research:** before compiling a brief, O resolves open facts in the AGENTS.md order (`--help` → Context7 → web) or delegates them to a subagent or research-only CLI run. The brief carries the resulting excerpts and the same research order for the worker.
 1. **Brief:** O compiles `.agent-briefs/<task>.md` just before dispatch, from the matrix row, the cited sections and the accepted predecessor code. It uses the template in the [runner guide](../agents/opencode-headless.md#brief-template). The worker reads the brief, not this plan.
 2. **Dispatch:** one worker at a time (D6). Logs go to `.agent-runs/<task>/` (gitignored).
 3. **Accept:** O checks that `git diff --name-only` is within scope, reads the diff, and reproduces the task checks and the full suite on `HEAD` + the change. O also confirms no test was weakened, then commits with named paths.
@@ -174,7 +180,7 @@ Scope names modules. O writes the exact paths, commands, test inputs and expecte
 
 - **Rejected work:** restore only the files in the task's scope; re-brief once, then escalate.
 - **Bad commit:** `git revert <task commit>`, then refresh the downstream briefs.
-- **No OpenCode or OpenRouter access for workers:** use Claude subagents (Haiku, escalating to Sonnet) or O alone. The briefs stay the same.
+- **No OpenCode or OpenRouter access for workers** (including the `opencode run` hang at `init` observed on 2026-11-26): use Claude subagents (Haiku, escalating to Sonnet) or O alone, with the same briefs. Record the switch in the Status cell. Use OpenCode free models only after their smoke test passes.
 - **`gpt-6-luna` can't read images:** proposed ADR change to `VISION_MODEL` (T04 gate).
 - **Decisions API fails:** set `DECISIONS_ENABLED=false` (ADR-000 TD-05).
 - **OpenRouter 402 or 429 during E2E:** stop and report to H.
@@ -196,6 +202,7 @@ Draft → H reviews this plan and the [review](hardware-service-copilot-poc-impl
   - receipts and sequential validation (D6);
   - ignored QA directory;
   - review file and revision-bound approval.
+- 2026-11-26: agents checked against reality (OpenCode free models 401; OpenCode runs hanging at init since 09:56; Claude subagents working); research order (`--help` → Context7 → web) and research delegation for every agent; worker permission for `npx --yes ctx7@latest`, `npm view` and tool `--help`.
 - 2026-11-26: the Status column in §5 is the authoritative tracker; GitHub Issues become an optional mirror with the same `Txx` IDs (administrative change, approval kept).
 - 2026-11-26: PRD context, scale and regulation; ADR-000 TD-10 privacy settings (`data_collection: deny`, `zdr: true`) in T04, T09, T15–T18 and T21 (TAC-001-08); data-model and deployment diagrams in ADR-000 §9.4–9.5.
 - 2026-11-26: real-stack coverage matrix (all endpoints, LLM stages, gates, Luna proof), capture policy (no documentation-derived shapes; derived fixtures; real error and tool-call captures; final-prompt re-capture in T21); T23 now depends on T21.

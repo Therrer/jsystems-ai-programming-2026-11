@@ -14,7 +14,14 @@
       "git diff*": "allow",
       "ls *": "allow",
       "cat *": "allow",
-      "node scripts/make-image-fixtures.mjs*": "allow"
+      "node scripts/make-image-fixtures.mjs*": "allow",
+      "npx vitest --help*": "allow",
+      "npx playwright --help*": "allow",
+      "npx tsc --help*": "allow",
+      "npx next --help*": "allow",
+      "npm view *": "allow",
+      "npx --yes ctx7@latest library *": "allow",
+      "npx --yes ctx7@latest docs *": "allow"
     },
     "webfetch": "deny",
     "websearch": "deny",

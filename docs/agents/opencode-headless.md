@@ -4,6 +4,33 @@ This is workflow documentation for the orchestrator (O) dispatching bounded task
 
 Verified with OpenCode 1.19.0 `--help` and docs (Context7 `/anomalyco/opencode/v1.18.35`, `/websites/opencode_ai`) on 2026-11-26.
 
+## Agents actually available (checked 2026-11-26)
+
+| Agent / model | Check | Result | Use |
+|---|---|---|---|
+| OpenCode 1.19.0 + `openrouter/openai/gpt-6-luna` | T01 smoke run; later runs | Worked in T01 (09:39) and in a minimal run at 09:55. **From 09:56 every `opencode run` hangs at `init`, before creating a session.** This also happens with the committed `opencode.json` and with a minimal prompt; no process holds the OpenCode database; the human's own TUI session (running since the previous day) is left untouched. Not diagnosed yet. | Default worker, once runs work again |
+| OpenCode + `openrouter/openai/gpt-6-luna-pro` | `opencode models openrouter` | Listed, not yet run | Escalation |
+| OpenCode free models: `opencode/mimo-v2.6-flash-free`, `opencode/deepseek-v4.1-flash-free` (11 `*-free` models today; check `opencode models opencode`) | Smoke run "reply OK" | **401 Invalid credential.** A stored OpenCode credential overrides anonymous access. The human must remove or refresh it (`opencode auth logout`, choose OpenCode; or `/connect` in the TUI), then O re-runs the smoke test. | Budget fallback and research; repository code only, never customer data |
+| Claude Code subagents (`Explore`, `general-purpose`, `web-fetch`, model `haiku` or `sonnet`) | Used in this session for research (AI SDK docs, OpenRouter docs, Decisions API) | Works | Research; fallback workers while OpenCode runs hang |
+| `claude` CLI (fresh session) | `command -v claude` | Installed | Independent review (R) |
+| `codex` CLI | `command -v codex` | Installed, not configured or used in this plan | Not used |
+| pnpm | `command -v pnpm` | Missing | npm is used everywhere |
+
+Add a provider to OpenCode with `/connect` in the TUI or `opencode auth login` on the command line.
+
+## Research order and delegation
+
+Every agent, workers included, looks facts up in this order:
+1. the tool's `--help`;
+2. Context7: `npx --yes ctx7@latest library …`, then `npx --yes ctx7@latest docs …`. `--yes` matters: without it npx waits for an install prompt and a headless run hangs;
+3. the web, last, and only for agents that have it. OpenCode workers don't; O and Claude subagents do.
+
+O delegates broader research to a Claude subagent or to a research-only OpenCode run, and keeps only the conclusion with sources. Example:
+
+`opencode run -m openrouter/openai/gpt-6-luna --dir <repo> --title "research <topic>" "Research <question>. Use --help and npx --yes ctx7@latest only. Do not edit files. Answer in Markdown with sources."`
+
+O checks `git status` afterwards: a research run must leave no changes.
+
 ## Headless usage
 
 1. **Provider and model:**
@@ -28,7 +55,7 @@ OpenCode 1.x **allows everything by default**. The effective policy is merged fr
 | Key | Rule (the last matching pattern wins, so the catch-all goes first) |
 |---|---|
 | `edit` | `"*": allow`, `"**/.env*": deny` |
-| `bash` | `"*": deny`, then allow `npx vitest *`, `npm test*`, `npx tsc --noEmit*`, `git status*`, `git diff*`, `ls *`, `cat *` and the fixture-generator script. Everything else stays denied: E2E, `npm run dev/build/start`, installs, `rm`, commits, pushes. |
+| `bash` | `"*": deny`, then allow `npx vitest *`, `npm test*`, `npx tsc --noEmit*`, `git status*`, `git diff*`, `ls *`, `cat *`, the fixture-generator script, Context7 (`npx --yes ctx7@latest library *`, `npx --yes ctx7@latest docs *`), `npm view *` and `--help` of vitest, playwright, tsc and next. Everything else stays denied: E2E, `npm run dev/build/start`, installs, `rm`, commits, pushes. |
 | `webfetch`, `websearch` | `deny` (briefs carry the documentation excerpts) |
 | `external_directory` | `deny`, except the repository |
 
@@ -52,7 +79,8 @@ Ordered steps with all choices resolved:
 Red (behavioural assertion and expected failure message) → Green → refactor:
 Commands to run and expected results and test counts:
 Evidence path (.agent-runs/<task>/ or artifacts/qa/<task>/<run>/):
-Report: files changed, commands with results, contradictions, open questions.
+Research order: brief excerpts → tool --help → Context7 (npx --yes ctx7@latest). No web access; report gaps.
+Report: files changed, commands with results, facts looked up, contradictions, open questions.
 ```
 
 ## Acceptance (O only)

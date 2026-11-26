@@ -1,8 +1,8 @@
 # Review — Hardware Service Decision Copilot PoC implementation plan
 
-**Verdict: revision `2dee8f9f…` approved by the human on 2026-11-26 (see §5).**
-- T00–T01 were done under `a2d1852f`, and T02–T03 under `821498c8`.
-- Execution continues with T04.
+**Verdict: revision `75ebca5d…` awaiting re-approval for worker tasks.**
+- `2dee8f9f` (approved) still covers T04 and T05: O-only tasks whose rows didn't change.
+- The new fallback models and workers and the research rules change the runner/model boundary, so the first worker dispatch (T06) needs re-approval.
 
 ## 1. Reviewed revisions (2026-11-26)
 
@@ -10,7 +10,7 @@ The repository is at `design-system` @ `7b3e347` (a merge of `main`, adding cour
 
 | File | SHA-256 |
 |---|---|
-| `docs/plans/hardware-service-copilot-poc-implementation-plan.md` | `563d030266a1dcf491eb3095e1bde7cd48dba0ce7821b8bab3b8d10c670a4ce4` (full; current file). It is an administrative revision of the approved `2dee8f9f…`. Compared with `2dee8f9f`, every matrix cell except Status is identical (checked by script); only the tracker wording, §6 steps 4 and 8 and the revision log changed. It supersedes the approved `821498c8…` and `a2d1852f…` (see §5) and the earlier `1a1d4b06…`. |
+| `docs/plans/hardware-service-copilot-poc-implementation-plan.md` | `75ebca5d840153e554607d7ff39f0f74078fade213d6c77d75f6fbfa7e2479de` (full; current file, awaiting re-approval for worker tasks). Previous file `563d0302…` was It is an administrative revision of the approved `2dee8f9f…`. Compared with `2dee8f9f`, every matrix cell except Status is identical (checked by script); only the tracker wording, §6 steps 4 and 8 and the revision log changed. It supersedes the approved `821498c8…` and `a2d1852f…` (see §5) and the earlier `1a1d4b06…`. |
 | `docs/PRD.md` | `a5417b3106758210…` |
 | `docs/ADR/000-main-architecture.md` | `11ef7f72e5b41dca…` |
 | `docs/ADR/001-ai-pipeline.md` | `b26594c1643c7cab…` |
@@ -50,6 +50,18 @@ The repository is at `design-system` @ `7b3e347` (a merge of `main`, adding cour
 | No accepted receipt; workers validated against other workers' uncommitted files | Receipt (SHA, evidence, note) required; sequential default (D6) |
 | Screenshots were committed in T25 | Gitignored QA directory; the report links locally |
 | No review file and no revision-bound approval | This file + a directive naming the SHA-256 |
+| Human request: delegation must use agents that actually exist; OpenCode free models; every agent uses Context7 and `--help` before the web and delegates research | Checked 2026-11-26:
+- OpenCode lists 11 free models, but `mimo-v2.6-flash-free` and `deepseek-v4.1-flash-free` return 401 because of a stored OpenCode credential (H must fix it).
+- `opencode run` worked at 09:39 and 09:55, then hangs at `init` from 09:56. This also happens with the committed config and a minimal prompt, so it was not caused by these changes. Not diagnosed yet.
+- Claude subagents work. pnpm is missing; npm is used everywhere.
+
+Changes:
+- AGENTS.md: research order for delegated workers, plus delegation of broad research.
+- `opencode.json`: workers may run `npx --yes ctx7@latest`, `npm view` and the `--help` of vitest, playwright, tsc and next. Without `--yes`, npx waits for an install prompt.
+- Runner guide: availability table and research section.
+- Plan: fallback workers, research step 0, hang fallback.
+
+The research smoke test under the worker policy could not run because of the hang, so it is **not verified**. |
 | Human request: status must live in the plan's Status column; GitHub Issues are optional with the same IDs | Added the §5 Status column as the authoritative tracker. T00–T03 are `done <SHA>`; T04 is `blocked` on the missing API key. GitHub Issues are now an optional mirror after approval, titled `Txx: …`, with the Task cell showing `Txx (#n)`. Receipts are written in the Status cell and the commit. Status-only edits are administrative. No task, dependency, owner or gate changed, so the approval of `2dee8f9f` is kept; the human may re-approve if they disagree. |
 | Human request: check whether the documents state the problem, users, scale, company specifics and regulated sector, and have UML diagrams | Problem and users were already covered (PRD §2–3). Added: PRD §1 context and scale (fictional medium-sized retailer; PoC with 1–5 testers and ≤ ~50 cases per day; not a regulated sector) and PRD §8 GDPR and AI Act constraints. New ADR-000 TD-10: `data_collection: deny` + `zdr: true` on every OpenRouter call (human chose option a), with TAC-001-08, applied in T04, T09, T15–T18 and T21. New diagrams in ADR-000: §9.4 data model (class diagram) and §9.5 deployment. All 19 Mermaid diagrams were rendered with mermaid-cli 11 without errors. |
 | Human request: E2E and manual tests must use the real app (every endpoint, LLM call and decision method), and unit/integration mocks must come from real captures | The plan's §4 now has a real-stack coverage matrix: all 5 endpoints, all 4 LLM stages, proof that Luna was called, timing and image gates through real inputs, the tool call and AI failure covered manually. A capture policy was added: no documentation-derived shapes, derived fixtures are allowed only as edits of real captures, real 401/400/timeout/connection-refused and tool-call captures in T04, and a re-capture with final prompts plus our API errors in T21. T23 depends on T21. ADR-000 §10 and TAC-001-06 are aligned. |
