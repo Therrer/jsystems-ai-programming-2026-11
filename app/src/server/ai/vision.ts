@@ -8,6 +8,7 @@ import { getAiProvider } from "@/server/ai/provider";
 import { visionSystemPrompt, visionUserContent } from "@/server/ai/prompts/vision";
 import { mapProviderError } from "@/server/errors";
 import { log } from "@/server/log";
+import { costFromProviderMetadata } from "@/server/ai/usage";
 import type { ProcessedImage } from "@/server/image";
 
 // Vision analysis stage (ADR-001 §3.3). Any failure is mapped to a domain error; no content is logged.
@@ -55,6 +56,16 @@ export function createVisionAnalyst(deps: { model: LanguageModel; timeoutMs?: nu
           timeout: { totalMs: timeoutMs },
           abortSignal: input.signal,
         });
+        // One line per model step (T24a). Single-step calls have one step; durationMs is the whole call.
+        for (const [index, step] of result.steps.entries()) {
+          log.info("ai_call", {
+            stage: "vision",
+            model,
+            durationMs: Date.now() - started,
+            costUsd: costFromProviderMetadata(step.providerMetadata),
+            step: index + 1,
+          });
+        }
         log.info("vision_done", { durationMs: Date.now() - started, model });
         return result.output;
       } catch (error) {

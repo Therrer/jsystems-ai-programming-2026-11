@@ -10,6 +10,7 @@ import { createUpdateDecisionTool, type UpdateDecisionContext } from "@/server/a
 import type { Case } from "@/server/cases/store";
 import { mapProviderError } from "@/server/errors";
 import { log } from "@/server/log";
+import { costFromProviderMetadata } from "@/server/ai/usage";
 import type { Policy } from "@/server/policies";
 
 // Chat agent (ADR-001 §3.8, PRD §4.5, TAC-001-08). Streams one answer per customer message. Provider
@@ -41,9 +42,12 @@ export function createChatAgent(deps: {
   const firstChunkMs = deps.firstChunkMs ?? FIRST_CHUNK_MS;
   const now = deps.now ?? (() => new Date());
 
+  const model = typeof deps.model === "string" ? deps.model : deps.model.modelId;
+
   return {
     async stream(input) {
       const { chatCase, newMessage, policy, today, signal } = input;
+      const streamStarted = Date.now();
       const originalMessages = [...chatCase.messages, newMessage];
 
       const messages = await convertToModelMessages<CaseUIMessage>(toModelSafeMessages(originalMessages), {
@@ -73,6 +77,16 @@ export function createChatAgent(deps: {
         maxRetries: 1,
         timeout: { totalMs, firstChunkMs },
         abortSignal: signal,
+        // One line per finished step (T24a). A failed stream logs only chat_failed.
+        onStepEnd: (step) => {
+          log.info("ai_call", {
+            stage: "chat",
+            model,
+            durationMs: Date.now() - streamStarted,
+            costUsd: costFromProviderMetadata(step.providerMetadata),
+            step: step.stepNumber + 1,
+          });
+        },
       });
 
       // ai@7.0.183 calls onError twice for one failure: once for the provider error and again for the

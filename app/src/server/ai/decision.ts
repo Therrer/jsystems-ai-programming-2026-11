@@ -8,6 +8,7 @@ import { getAiProvider } from "@/server/ai/provider";
 import { correctionPrompt, decisionSystemPrompt, decisionUserPrompt, FALLBACK_TEXTS } from "@/server/ai/prompts/decision";
 import { mapProviderError } from "@/server/errors";
 import { log } from "@/server/log";
+import { costFromProviderMetadata } from "@/server/ai/usage";
 import type { Policy } from "@/server/policies";
 import { validateDecision } from "@/server/guardrails";
 
@@ -50,6 +51,8 @@ export function createDecisionAgent(deps: {
   const minRetryMs = deps.minRetryMs ?? MIN_RETRY_MS;
   const now = deps.now ?? Date.now;
 
+  const model = typeof deps.model === "string" ? deps.model : deps.model.modelId;
+
   return {
     async decide(input) {
       const start = now();
@@ -69,6 +72,7 @@ export function createDecisionAgent(deps: {
       type Attempt = { kind: "output"; text: string; draft: DecisionDraft } | { kind: "schema" };
       const attempt = async (messages: Array<{ role: "user" | "assistant"; content: string }>, timeoutMs: number): Promise<Attempt> => {
         try {
+          const callStarted = now();
           const result = await generateText({
             model: deps.model,
             system,
@@ -77,6 +81,16 @@ export function createDecisionAgent(deps: {
             maxRetries: 1,
             timeout: { totalMs: timeoutMs },
             abortSignal: input.signal,
+            // One line per model step, also for attempts whose output fails the schema (T24a).
+            onStepEnd: (step) => {
+              log.info("ai_call", {
+                stage: "decision",
+                model,
+                durationMs: now() - callStarted,
+                costUsd: costFromProviderMetadata(step.providerMetadata),
+                step: step.stepNumber + 1,
+              });
+            },
           });
           return { kind: "output", text: JSON.stringify(result.output), draft: result.output };
         } catch (error) {

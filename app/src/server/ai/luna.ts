@@ -7,6 +7,7 @@ import { getEnv } from "@/server/env";
 import { getAiProvider, type DecisionsRequestBody } from "@/server/ai/provider";
 import { lunaQuestions, lunaState, type LunaQuestion } from "@/server/ai/prompts/luna-questions";
 import { log } from "@/server/log";
+import { costFromRawUsage } from "@/server/ai/usage";
 import type { ProcessedImage } from "@/server/image";
 
 // Luna pre-check client (ADR-001 §3.2, TD-105). evaluate() never throws: every failure becomes
@@ -136,6 +137,14 @@ export function createLunaClient(deps: {
         if (response.status !== 200) return unavailable("http_status", response.status);
 
         const body: unknown = await response.json();
+        // One line per HTTP call (T24a): the call is paid for even when its body is unusable.
+        log.info("ai_call", {
+          stage: "luna",
+          model: deps.model,
+          durationMs: now() - started,
+          costUsd: costFromRawUsage(isRecord(body) ? body.usage : undefined),
+          step: 1,
+        });
         if (!isRecord(body) || !isRecord(body.answers)) return unavailable("invalid_body");
 
         const normalized = normalizeAnswers(body.answers, input.caseType, input.form.category, deps.threshold);
