@@ -1,8 +1,8 @@
 # Review — Hardware Service Decision Copilot PoC implementation plan
 
-**Verdict: revision `2dee8f9f…` awaiting human re-approval.**
-- T00–T01 were done under `a2d1852f`, and T02–T03 under `821498c8` (commits `0500e6f` and `db89ed2`).
-- T04–T28 need re-approval of this revision.
+**Verdict: revision `2dee8f9f…` approved by the human on 2026-11-26 (see §5).**
+- T00–T01 were done under `a2d1852f`, and T02–T03 under `821498c8`.
+- Execution continues with T04.
 
 ## 1. Reviewed revisions (2026-11-26)
 
@@ -85,3 +85,5 @@ The plan file keeps `approval: draft` in its header on purpose: editing it would
 **2026-11-26:** this approval covered revision `a2d1852f`. On the human's request it was superseded by `821498c8…` (real-stack coverage and capture policy). Re-approval is pending; T02–T03 remain covered.
 
 **2026-11-26 re-approval (`821498c8`, later superseded by `2dee8f9f`, which is pending):** the human approved revision `821498c830368460777dc2d725171c059b232e78f0186572a28ede155846e560` ("zatwierdzam 821498c8", checked on disk) and instructed "wykonuj T02 i T03" (execute T02 and T03). It covers T02–T28; the open consents (Issues are disabled again) are unchanged.
+
+**2026-11-26 re-approval:** the human approved revision `2dee8f9fcc49eb3f6c59bbe223e69fddb7faef574f3dc94f2e453ba9f51671c2` ("zatwierdzam 2dee8f9f", checked on disk) and instructed "wykonuj T04" (execute T04). It covers T04–T28.
