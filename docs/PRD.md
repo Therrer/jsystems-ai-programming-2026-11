@@ -6,6 +6,12 @@
 
 Hardware Service Decision Copilot is a **proof of concept (PoC)** of a self-service web application for consumers who want to file a complaint or return an electronics product. The customer fills in a short form with a photo of the device. An AI pipeline first analyses the photo and then applies the company's complaint or return terms. It produces a **preliminary decision** (accept / reject / needs manual review) with a justification and next steps. The customer can then ask follow-up questions in a chat. The final decision always belongs to the human service team, after it inspects the device.
 
+**Context and scale.**
+- **Company:** a fictional, medium-sized consumer-electronics retailer ("Example Electronics Store"), selling online and in physical stores in Poland.
+- **PoC audience and load:** the PoC is a course demo for 1–5 testers, with at most about 50 cases per day and a few concurrent sessions, run locally.
+- **Not a regulated-sector product:** this is not finance, medical, government or military. Polish consumer law, the GDPR and the EU AI Act transparency duties still apply (§8).
+- **Before production:** volumes, availability and hosting must be re-specified.
+
 ---
 
 ## 2. Problem Statement
@@ -198,6 +204,12 @@ Same as 4.1 with these differences:
 - The customer must be told they are dealing with an AI assistant before submitting (AC-42) and in every decision (AC-41).
 - Return and complaint rules come only from the two policy documents. The agent must not invent rules, deadlines or amounts.
 - The policy documents are fictional samples. They need legal review before any real use.
+- **Personal data (GDPR):**
+  - Photos and free-text descriptions can contain personal data, even though the form does not ask for any (§7).
+  - Data sent to AI providers must not be used by them for training or retained by them (see ADR-000 TD-10).
+  - The application stores no case data after the session (AC-37).
+  - Test and demo data are synthetic.
+- **AI transparency (EU AI Act):** the customer is told they are interacting with an AI system (AC-41, AC-42). Legal review must confirm the wording and the applicable obligations before production.
 
 ### Functional
 

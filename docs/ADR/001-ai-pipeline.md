@@ -531,3 +531,4 @@ sequenceDiagram
 - **TAC-001-05** The vision request sent to the model contains exactly one `file` part, its byte length is under 1 MB, and no EXIF data is present (checked with sharp metadata on the sent bytes).
 - **TAC-001-06** With the Luna client failing in every captured way (a real timeout, a real connection error, and a refusal only if one was captured for real), case creation still succeeds in the integration tests.
 - **TAC-001-07** When `EVAL_LOG_PATH` is set, each decided case appends exactly one valid JSON line with no `description`, `modelName` or image fields.
+- **TAC-001-08** Every model request captured in the integration tests (vision, decision, chat and Luna) carries `provider.data_collection = "deny"` and `provider.zdr = true` (ADR-000 TD-10).

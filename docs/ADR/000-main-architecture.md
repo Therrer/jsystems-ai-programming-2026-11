@@ -336,6 +336,26 @@ Details are in 002.
 
 ---
 
+### TD-10 Privacy settings for every OpenRouter call
+**Status:** Accepted (user decision 2026-11-26, option a)
+**Date:** 2026-11-26
+**Context:**
+- Customer photos and descriptions can contain personal data (PRD §8, GDPR).
+- OpenRouter routes requests to third-party providers. By default it allows providers that may collect or retain prompts (`provider.data_collection` defaults to `allow`).
+**Decision:**
+- Every OpenRouter request sets `provider.data_collection: "deny"` and `provider.zdr: true` (zero data retention), so only endpoints that neither train on nor retain the data serve it. This covers the vision, decision and chat calls and the Decisions API call.
+- The settings are applied in one place, the provider factory in `server/ai/provider`, for chat models. The Luna client applies them in its request.
+- They are not configurable by environment variables, because the PoC must not run without them.
+- No EU-only host for the PoC: `eu.openrouter.ai` requires a Business plan.
+- T04 checks that at least one compliant endpoint serves each configured model. If none does, the case is stopped and escalated to the human; it does not fall back to permissive settings.
+**Rejected alternatives:**
+- Only `data_collection: "deny"`: providers could still retain prompts temporarily.
+- No restrictions, relying on synthetic data: real photos could be uploaded during demos.
+**Consequences:**
+- (+) No training on or retention of customer data by the serving providers.
+- (-) Fewer eligible providers, so higher latency or cost and possible 503 "no provider meets your routing requirements". Model choice may need to change after T04.
+**Review trigger:** moving to production (add EU residency and a data processing agreement), or T04 finding no compliant endpoint for a configured model.
+
 ## 9. Diagrams
 
 ### 9.1 Architecture / Component Diagram
@@ -492,6 +512,98 @@ sequenceDiagram
 ```
 
 See 001 for the `updateDecision` tool flow and 002 for chat error handling.
+
+### 9.4 Data Model (class diagram)
+
+Conceptual model of the in-memory case aggregate (section 5). Field lists are abbreviated; ADR-001 §4 and ADR-002 §4.3 are authoritative.
+
+```mermaid
+classDiagram
+    class Case {
+      caseId: UUID
+      createdAt, lastActivityAt
+      status: analysed or decided
+      busySince: number or null
+      userMessageCount: number
+    }
+    class CaseFormInput {
+      caseType: complaint or return
+      category: 8-value enum
+      modelName, purchaseDate, description
+    }
+    class ProcessedImage {
+      mediaType: image/webp
+      width, height, bytes, dataUrl
+    }
+    class LunaSignals {
+      status: ok or partial or unavailable
+      derivedCategoryMatch
+    }
+    class LunaSignal {
+      key, type, value
+      probabilities, confidence, certainty
+      status: answered or low_confidence or not_answered
+    }
+    class ImageAnalysis {
+      imageUsable, deviceVisible
+      categoryMatch, detectedCategory
+      damage[], likelyCause, signsOfUse
+      lunaVerification[]
+    }
+    class GateResult {
+      timing: TimingStatus
+      forcedOutcome, requiredRuleIds, reasonCodes
+    }
+    class Decision {
+      version, source: initial or chat_update
+      outcome: ACCEPT or REJECT or MANUAL_REVIEW
+      remedy, citedRuleIds
+      textsPl, appliedGuardrails
+    }
+    class CaseUIMessage {
+      id, role, metadata.createdAt
+      parts: text or data-decision or tool-updateDecision
+    }
+    Case "1" *-- "1" CaseFormInput : form
+    Case "1" *-- "0..1" ProcessedImage : image (cleared after decision)
+    Case "1" *-- "1" LunaSignals : luna
+    LunaSignals "1" *-- "0..9" LunaSignal : signals
+    Case "1" *-- "1" ImageAnalysis : analysis
+    Case "1" *-- "1" GateResult : gates
+    Case "1" *-- "1..*" Decision : decisions
+    Case "1" *-- "1..*" CaseUIMessage : messages
+    CaseUIMessage ..> Decision : data-decision, tool output
+```
+
+### 9.5 Deployment Diagram
+
+PoC deployment (TD-04, ADR-002 TD-204): one local Node.js process and no database; every model call leaves through OpenRouter with the TD-10 privacy settings.
+
+```mermaid
+flowchart LR
+    subgraph VM["Course VM, local only"]
+        B["Browser"]
+        subgraph Node["Node.js 22+, single process"]
+            N["Next.js 16 server: pages and route handlers"]
+            S[("In-memory CaseStore, TTL 120 min")]
+            N --- S
+        end
+        F[("docs/policies, read at start")]
+        E[(".data/eval.jsonl, optional, gitignored")]
+        B -->|"HTTP on localhost port 3000"| N
+        N -.->|reads| F
+        N -.->|appends| E
+    end
+    subgraph OR["OpenRouter with data_collection deny and zdr true"]
+        CC["Chat completions API: LLM_MODEL"]
+        DA["Decisions API alpha: gpt-6-luna-decisions"]
+    end
+    P["Third-party model providers, compliant endpoints only"]
+    N -->|"HTTPS with OPENROUTER_API_KEY"| CC
+    N -->|HTTPS| DA
+    CC --> P
+    DA --> P
+```
 
 ---
 

@@ -1,6 +1,8 @@
 # Review — Hardware Service Decision Copilot PoC implementation plan
 
-**Verdict: revision `821498c8…` approved by the human on 2026-11-26 (see §5).** T00 and T01 were done under `a2d1852f`; execution continues with T02 and T03.
+**Verdict: revision `2dee8f9f…` awaiting human re-approval.**
+- T00–T01 were done under `a2d1852f`, and T02–T03 under `821498c8` (commits `0500e6f` and `db89ed2`).
+- T04–T28 need re-approval of this revision.
 
 ## 1. Reviewed revisions (2026-11-26)
 
@@ -8,7 +10,7 @@ The repository is at `design-system` @ `7b3e347` (a merge of `main`, adding cour
 
 | File | SHA-256 |
 |---|---|
-| `docs/plans/hardware-service-copilot-poc-implementation-plan.md` | `821498c830368460777dc2d725171c059b232e78f0186572a28ede155846e560` (full; current revision, awaiting re-approval). It supersedes the approved `a2d1852f…` (see §5) and the earlier `1a1d4b06…`. |
+| `docs/plans/hardware-service-copilot-poc-implementation-plan.md` | `2dee8f9fcc49eb3f6c59bbe223e69fddb7faef574f3dc94f2e453ba9f51671c2` (full; current revision, awaiting re-approval). It supersedes the approved `821498c8…` and `a2d1852f…` (see §5) and the earlier `1a1d4b06…`. |
 | `docs/PRD.md` | `a5417b3106758210…` |
 | `docs/ADR/000-main-architecture.md` | `11ef7f72e5b41dca…` |
 | `docs/ADR/001-ai-pipeline.md` | `b26594c1643c7cab…` |
@@ -48,6 +50,7 @@ The repository is at `design-system` @ `7b3e347` (a merge of `main`, adding cour
 | No accepted receipt; workers validated against other workers' uncommitted files | Receipt (SHA, evidence, note) required; sequential default (D6) |
 | Screenshots were committed in T25 | Gitignored QA directory; the report links locally |
 | No review file and no revision-bound approval | This file + a directive naming the SHA-256 |
+| Human request: check whether the documents state the problem, users, scale, company specifics and regulated sector, and have UML diagrams | Problem and users were already covered (PRD §2–3). Added: PRD §1 context and scale (fictional medium-sized retailer; PoC with 1–5 testers and ≤ ~50 cases per day; not a regulated sector) and PRD §8 GDPR and AI Act constraints. New ADR-000 TD-10: `data_collection: deny` + `zdr: true` on every OpenRouter call (human chose option a), with TAC-001-08, applied in T04, T09, T15–T18 and T21. New diagrams in ADR-000: §9.4 data model (class diagram) and §9.5 deployment. All 19 Mermaid diagrams were rendered with mermaid-cli 11 without errors. |
 | Human request: E2E and manual tests must use the real app (every endpoint, LLM call and decision method), and unit/integration mocks must come from real captures | The plan's §4 now has a real-stack coverage matrix: all 5 endpoints, all 4 LLM stages, proof that Luna was called, timing and image gates through real inputs, the tool call and AI failure covered manually. A capture policy was added: no documentation-derived shapes, derived fixtures are allowed only as edits of real captures, real 401/400/timeout/connection-refused and tool-call captures in T04, and a re-capture with final prompts plus our API errors in T21. T23 depends on T21. ADR-000 §10 and TAC-001-06 are aligned. |
 | Human request: manual tests in addition to automated tests, and no mocks | T25 runs one manual test case per PRD flow and AC group on the real stack, with manual checks in T02, T14 and T22. A no-mock guard test is created in T03; T24/T25 require real-call evidence; T27 audits production paths for mocks. On 2026-11-26 `app/` has no code, so there are no mocks yet. |
 
@@ -81,4 +84,4 @@ The plan file keeps `approval: draft` in its header on purpose: editing it would
 
 **2026-11-26:** this approval covered revision `a2d1852f`. On the human's request it was superseded by `821498c8…` (real-stack coverage and capture policy). Re-approval is pending; T02–T03 remain covered.
 
-**2026-11-26 re-approval:** the human approved revision `821498c830368460777dc2d725171c059b232e78f0186572a28ede155846e560` ("zatwierdzam 821498c8", checked on disk) and instructed "wykonuj T02 i T03" (execute T02 and T03). It covers T02–T28; the open consents (Issues are disabled again) are unchanged.
+**2026-11-26 re-approval (`821498c8`, later superseded by `2dee8f9f`, which is pending):** the human approved revision `821498c830368460777dc2d725171c059b232e78f0186572a28ede155846e560` ("zatwierdzam 821498c8", checked on disk) and instructed "wykonuj T02 i T03" (execute T02 and T03). It covers T02–T28; the open consents (Issues are disabled again) are unchanged.
