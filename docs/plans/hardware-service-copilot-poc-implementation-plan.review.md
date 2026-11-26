@@ -1,0 +1,75 @@
+# Review — Hardware Service Decision Copilot PoC implementation plan
+
+**Verdict: approved by the human on 2026-11-26 (see §5). Execution started with T00.** The earlier verdict was "blocked — human decision required".
+
+## 1. Reviewed revisions (2026-11-26)
+
+The repository is at `design-system` @ `7b3e347` (a merge of `main`, adding course materials only). All documents below are uncommitted, so their SHA-256 hashes identify them (first 16 hex characters shown):
+
+| File | SHA-256 |
+|---|---|
+| `docs/plans/hardware-service-copilot-poc-implementation-plan.md` | `a2d1852ff936509260658e104556a54592cbc885526d61b70da54acdb573f09d` (full; this is the revision to approve; it supersedes `1a1d4b06…`) |
+| `docs/PRD.md` | `a5417b3106758210…` |
+| `docs/ADR/000-main-architecture.md` | `11ef7f72e5b41dca…` |
+| `docs/ADR/001-ai-pipeline.md` | `b26594c1643c7cab…` |
+| `docs/ADR/002-backend-api.md` | `4fb7e4c08c043ea4…` |
+| `docs/ADR/003-frontend.md` | `642833d259a0fef6…` |
+| `docs/policies/return-terms.md` / `complaint-terms.md` | `27cc733ada354735…` / `1e7c1c2c315ae3da…` |
+| `docs/agents/opencode-headless.md` | `2ef7588c037aee1b…` |
+| `AGENTS.md` (modified) / `CLAUDE.md` (modified) | `ce335eee9608d6d0…` / `2d54271599e18c77…` |
+| `docs/design-guidelines.md` (committed) | `e96e1d2f71d5c9d1…` |
+
+## 2. Checks
+
+**Script checks:** these are evidence, not judgment.
+- **Coverage:** all 45 PRD acceptance criteria are mapped; PRD flows §4.1–4.7 and UI sections §9.1–9.5 are mapped; 26/26 ADR TACs and 23/23 ADR TDs are referenced. There are no gaps. Exclusions are PRD §7 only.
+- **Graph:** 29 tasks with unique IDs; every prerequisite exists; no forward or self dependencies; T28 is the only leaf; the critical path is valid.
+- **Links:** all local links resolve.
+- **Size:** 2,514 words (table pipes excluded).
+
+**Judgment checks:** made by the plan's author, Claude Opus 5.5. This is **not** an independent review.
+- **Plan/brief separation:**
+  - The plan keeps sequencing, ownership and gates.
+  - Runner usage, permissions and the brief template live in `docs/agents/opencode-headless.md`.
+  - Exact paths and commands are deferred to briefs.
+- **Red quality:** the bootstrap tasks (T02/T03) prove test discovery with a controlled assertion. Feature Red is behavioural; a missing module does not count (T05).
+- **Concurrency:** the default is sequential workers (D6). Each task is validated on `HEAD` plus its own change. Dependents need an accepted receipt.
+- **QA evidence:** gitignored `artifacts/qa/<task>/<run>/`. T01 sets it up and verifies it with `git check-ignore -v`. Screenshots are never committed or cleaned without the human's consent.
+- **Instructions:** AGENTS.md *Delegated workers*, the unreachable-code Manual QA rule, and Context7 via CLI or MCP are consistent with the plan.
+- **Automation:** the only hook is `PreToolUse` for `pom.xml`, which doesn't apply here. There are no cron jobs or loops. No automation can resume this task.
+
+## 3. Findings and fixes in this revision
+
+| Finding (source: agent-toolbox PR #28 comparison) | Fix |
+|---|---|
+| The plan was 5,974 words and contained the runner guide and permission config | Compacted, and the guide moved to `docs/agents/opencode-headless.md` |
+| The matrix fixed file names and commands before they exist | Scope is now module-level; exact paths and commands go into briefs |
+| T05 Red was "module missing" | Behavioural Red examples instead |
+| No accepted receipt; workers validated against other workers' uncommitted files | Receipt (SHA, evidence, note) required; sequential default (D6) |
+| Screenshots were committed in T25 | Gitignored QA directory; the report links locally |
+| No review file and no revision-bound approval | This file + a directive naming the SHA-256 |
+| Human request: manual tests in addition to automated tests, and no mocks | T25 runs one manual test case per PRD flow and AC group on the real stack, with manual checks in T02, T14 and T22. A no-mock guard test is created in T03; T24/T25 require real-call evidence; T27 audits production paths for mocks. On 2026-11-26 `app/` has no code, so there are no mocks yet. |
+
+Earlier findings in the same session (B1–B5, I1–I9, M1–M9) were fixed in the PRD, ADRs, AGENTS.md and CLAUDE.md. They are summarized in the plan's revision line.
+
+## 4. Limits and open items
+
+- **Size:** 2,514 words is about 25 % over the ~2,000-word target. The main cause is keeping a criterion ID on each of the 29 rows, plus the manual-test and no-mock tables the human asked for; compressing further would drop traceability or those checks.
+- **Unverified facts** (a T04 gate): `gpt-6-luna` image and structured-output support, and the `gpt-6-luna-decisions` metadata. The OpenCode 1.19 permission format is checked in T01.
+- **Open decisions:** D1 (a second, different PRD in branch `worktree-prd-service-copilot`), D2, D4, D5, D6.
+- **Consents:** creating GitHub issues and labels, the `Bash(opencode run:*)` allow rule, running workers.
+- **Shared instruction files:** the AGENTS.md and CLAUDE.md edits affect the whole course repository. The human should review them before T00.
+- **Recommended:** an independent review by a fresh strong-model session before approval.
+
+## 5. Approval record
+
+| Field | Value |
+|---|---|
+| Approved by | The human (repository owner, GitHub `Therrer`), in the Claude Code session |
+| When | 2026-11-26 |
+| Approved revision | Plan SHA-256 `a2d1852ff936509260658e104556a54592cbc885526d61b70da54acdb573f09d`, checked on disk before execution |
+| Decisions | D1–D6 accepted with their defaults: this checkout's documents; branch `feat/service-copilot-poc` from `design-system` with the PR targeting `design-system`; ≤ $0.50 per worker attempt and ≤ $8 in total; ADR-000 §1 assumptions accepted; one worker at a time |
+| Execution instruction | "wykonuj T00" (execute T00) |
+| Not yet consented | Creating GitHub issues and labels, the `Bash(opencode run:*)` allow rule, running OpenCode workers. These are needed from T01 on. |
+
+The plan file keeps `approval: draft` in its header on purpose: editing it would change the approved hash. This record is the approval.
