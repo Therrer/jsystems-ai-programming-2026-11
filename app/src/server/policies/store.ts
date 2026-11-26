@@ -20,7 +20,7 @@ function readPolicy(dir: string, caseType: Policy["caseType"]): Policy {
   const fileName = FILES[caseType];
   let markdown: string;
   try {
-    markdown = fs.readFileSync(path.join(dir, fileName), "utf8");
+    markdown = fs.readFileSync(/*turbopackIgnore: true*/ path.join(/*turbopackIgnore: true*/ dir, fileName), "utf8");
   } catch {
     throw new PolicyError(`Policy file ${fileName} is missing or unreadable`);
   }
