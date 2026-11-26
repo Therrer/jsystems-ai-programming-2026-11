@@ -5,7 +5,12 @@ import { defineConfig } from "vitest/config";
 // Every run loads the network guard (TAC-02): no test may reach a real external host.
 export default defineConfig({
   resolve: {
-    alias: { "@": path.resolve(import.meta.dirname, "src") },
+    alias: {
+      "@": path.resolve(import.meta.dirname, "src"),
+      // Tests run server modules in Node: use the package's own "react-server" export (empty.js)
+      // instead of the default export, which throws outside React Server Components.
+      "server-only": path.resolve(import.meta.dirname, "node_modules/server-only/empty.js"),
+    },
   },
   test: {
     setupFiles: ["./tests/setup/network-guard.ts"],
