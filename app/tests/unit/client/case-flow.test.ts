@@ -274,3 +274,19 @@ describe("isCaseOpen", () => {
     expect(isCaseOpen(state())).toBe(open);
   });
 });
+
+describe("failed state accepts field errors (orchestrator fix found in T12)", () => {
+  it("SET_FIELD_ERRORS in failed moves to editing with exactly those errors and keeps the values", () => {
+    const failed = caseFlowReducer(
+      caseFlowReducer(caseFlowReducer(initialFlowState, { type: "SET_FIELD", field: "modelName", value: "Pixel 9" }), { type: "SUBMIT" }),
+      { type: "FAILED", step: 1, error: { code: "AI_UNAVAILABLE", messagePl: "x" } },
+    );
+    expect(failed.kind).toBe("failed");
+    const next = caseFlowReducer(failed, { type: "SET_FIELD_ERRORS", fieldErrors: { image: "FILE_TOO_LARGE" } });
+    expect(next.kind).toBe("editing");
+    if (next.kind === "editing") {
+      expect(next.fieldErrors.image).toBe("FILE_TOO_LARGE");
+      expect(next.values.modelName).toBe("Pixel 9");
+    }
+  });
+});

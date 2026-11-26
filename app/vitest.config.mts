@@ -28,6 +28,8 @@ export default defineConfig({
         test: {
           name: "component",
           environment: "jsdom",
+          // userEvent typing and Radix in jsdom can exceed 5 s under a full parallel run.
+          testTimeout: 15_000,
           include: ["tests/component/**/*.test.tsx"],
         },
       },

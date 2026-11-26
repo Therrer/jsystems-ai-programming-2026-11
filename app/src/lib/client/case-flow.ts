@@ -112,6 +112,10 @@ export function caseFlowReducer(state: FlowState, action: FlowAction): FlowState
       const edited = applyEdit(state, {}, action);
       if (edited) return edited;
       const { values, file, previewUrl } = state;
+      // The form is enabled again after a failure (AC-40): client validation errors move it back to editing.
+      if (action.type === "SET_FIELD_ERRORS") {
+        return { kind: "editing", fieldErrors: action.fieldErrors, values, file, previewUrl };
+      }
       if (action.type === "RETRY") {
         if (state.failedStep === 2 && state.caseId !== null) {
           return { kind: "processing", step: 2, caseId: state.caseId, values, file, previewUrl };

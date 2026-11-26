@@ -129,7 +129,8 @@ describe("processImage: derived in-memory inputs", () => {
     expect(out.code).not.toBe("FILE_TOO_LARGE");
   });
 
-  it("reports a decoded image above MAX_INPUT_PIXELS as IMAGE_UNREADABLE", async () => {
+  // Decoding a 6400 x 6400 image can take > 5 s under load; the assertion is unchanged.
+  it("reports a decoded image above MAX_INPUT_PIXELS as IMAGE_UNREADABLE", { timeout: 30_000 }, async () => {
     const big = await sharp(real("phone-3.jpeg"))
       .resize(6400, 6400, { fit: "fill" })
       .jpeg({ quality: 40 })
