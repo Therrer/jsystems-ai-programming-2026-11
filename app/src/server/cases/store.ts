@@ -22,6 +22,7 @@ export interface Case {
   status: "analysed" | "decided";
   busySince: number | null; // lock timestamp (ms)
   userMessageCount: number;
+  timings?: { lunaMs?: number; visionMs?: number }; // stage durations of the analysis (evaluation log)
 }
 
 export type NewCase = Pick<Case, "form" | "image">;
