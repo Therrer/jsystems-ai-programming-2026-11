@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "name": "error-timeout",
+    "capturedAt": "2026-11-26T10:27:48.620Z",
+    "note": "Real client-side timeout (AbortSignal.timeout 1 ms) against the real endpoint.",
+    "images": [],
+    "durationMs": 5
+  },
+  "request": {
+    "method": "POST",
+    "url": "https://openrouter.ai/api/v1/chat/completions",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer <redacted>"
+    },
+    "body": {
+      "model": "openai/gpt-6-luna",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Odpowiedz: OK"
+        }
+      ],
+      "max_tokens": 50,
+      "provider": {
+        "data_collection": "deny",
+        "zdr": true
+      }
+    }
+  },
+  "error": {
+    "name": "TimeoutError",
+    "message": "The operation was aborted due to timeout",
+    "code": 23
+  }
+}

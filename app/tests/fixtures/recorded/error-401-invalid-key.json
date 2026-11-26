@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "name": "error-401-invalid-key",
+    "capturedAt": "2026-11-26T10:27:48.416Z",
+    "note": "Deliberately invalid API key.",
+    "images": [],
+    "durationMs": 179
+  },
+  "request": {
+    "method": "POST",
+    "url": "https://openrouter.ai/api/v1/chat/completions",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer <redacted>"
+    },
+    "body": {
+      "model": "openai/gpt-6-luna",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Odpowiedz: OK"
+        }
+      ],
+      "max_tokens": 50,
+      "provider": {
+        "data_collection": "deny",
+        "zdr": true
+      }
+    }
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "access-control-allow-origin": "*",
+      "access-control-expose-headers": "WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,x-openrouter-subscription-passthrough,anthropic-ratelimit-unified-status,Retry-After,cf-ray",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "cf-ray": "a60833e3becbf9da-WAW",
+      "connection": "keep-alive",
+      "content-type": "application/json",
+      "date": "Thu, 26 Nov 2026 10:27:48 GMT",
+      "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\")",
+      "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
+      "server": "cloudflare",
+      "transfer-encoding": "chunked",
+      "x-content-type-options": "nosniff",
+      "x-openrouter-error-origin": "client"
+    },
+    "body": {
+      "error": {
+        "message": "User not found.",
+        "code": 401
+      }
+    }
+  }
+}

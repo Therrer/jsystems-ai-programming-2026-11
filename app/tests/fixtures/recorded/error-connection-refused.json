@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "name": "error-connection-refused",
+    "capturedAt": "2026-11-26T10:27:48.625Z",
+    "note": "Unreachable base URL (port 9 on localhost).",
+    "images": [],
+    "durationMs": 5
+  },
+  "request": {
+    "method": "POST",
+    "url": "http://127.0.0.1:9/api/v1/chat/completions",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer <redacted>"
+    },
+    "body": {
+      "model": "openai/gpt-6-luna",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Odpowiedz: OK"
+        }
+      ],
+      "max_tokens": 50,
+      "provider": {
+        "data_collection": "deny",
+        "zdr": true
+      }
+    }
+  },
+  "error": {
+    "name": "TypeError",
+    "message": "fetch failed",
+    "code": null
+  }
+}

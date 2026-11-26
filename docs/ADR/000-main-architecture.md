@@ -681,8 +681,22 @@ Run these in order from the repository root, then verify each step. Check flags 
 
 ## 12. Open Questions and Unverified Facts
 
-- `openai/gpt-6-luna-decisions` model page returned 404 and the models endpoint could not be queried (fetch denied). Its existence comes from OpenRouter's multimodal-decisions guide. Pricing, context and limits are unknown, which is why step 13 is required.
-- `openai/gpt-6-luna` image input and `structured_outputs` support were not confirmed (only `response_format` is listed on its page).
+- **Verified by T04 captures (2026-11-26; `app/tests/fixtures/recorded/`, all requests with TD-10 `data_collection: deny` + `zdr: true`):**
+  - **`openai/gpt-6-luna`:**
+    - Inputs: text, image and file. Context 1,050,000 tokens. Price $0.10 per 1M input and $0.50 per 1M output tokens.
+    - Supports `response_format`, `structured_outputs`, `tools`, `tool_choice` and `reasoning`.
+    - A compliant endpoint (Azure) served the vision, decision and streamed chat calls, including a streamed `updateDecision` tool call. `VISION_MODEL = LLM_MODEL` is therefore valid.
+  - **`openai/gpt-6-luna-decisions`:**
+    - Not in the default `/api/v1/models` list, only in `?output_modalities=decisions`.
+    - Served by Azure as `openai/gpt-6-luna-decisions-20261006` under the TD-10 constraints.
+    - `noul` answers carry no `confidence` field (only `choice` answers do), so certainty falls back to the top probability (ADR-001 §3.2).
+    - A plain image with no device produced **no refusal**. It even returned `damage_type: display_defect` with confidence 1 while `device_visible` was 0, which confirms that the LLM must verify Luna's signals (TD-05). Refusal handling therefore has no real fixture, a missing prerequisite under the capture policy.
+  - **Billing:** the account uses BYOK (`is_byok: true`), so `usage.cost` is 0 and the upstream cost is in `usage.cost_details` (about $0.0003 per Luna call).
+- **Error shapes captured for real:**
+  - 401 `{"error":{"message":"User not found.","code":401}}`;
+  - 400 for an unknown model, with `user_id` redacted;
+  - client timeout `TimeoutError` (code 23);
+  - unreachable host `TypeError: fetch failed`.
 - The exact shadcn AI registry component names after the AI Elements migration need checking on implementation day.
 - `experimental_evaluate` and `/api/alpha/decisions` are alpha and may change. Any change stays inside `server/ai/luna`.
 - The four "assumption" decisions in section 1 can be changed by the user before implementation without affecting the rest of the architecture.
