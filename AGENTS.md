@@ -16,6 +16,7 @@ Chat in Polish unless the user asks for another language. Repository documentati
 - `docs/design-guidelines.md` — design system and tokens
 - `docs/policies/` — return and complaint terms the application injects into its prompts at runtime; keep rule IDs (`R-x.y`, `C-x.y`) stable
 - `docs/plans/` — implementation plans and their task matrix
+- `assets/example-images/` — real device photos (laptops, phones) for upload tests and manual QA; read its `README.md`. Use only these photos for upload tests: never generate, blur, crop or relabel images, and never tell the model what a photo shows. Tests assert the model's actual assessment, not an assumed one.
 
 ---
 
