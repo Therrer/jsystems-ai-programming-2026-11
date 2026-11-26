@@ -37,3 +37,7 @@ playwright/.cache/
 /.idea
 # Playwright CLI output (may contain credentials)
 .playwright-cli/
+
+# Agent run logs and QA screenshots: kept locally until the human allows cleanup, never committed
+/.agent-runs/
+/artifacts/qa/

@@ -32,6 +32,7 @@
       "Bash(npm test:*)",
       "Bash(npm audit:*)",
       "Bash(npx:*)",
+      "Bash(opencode run:*)",
       "Bash(pnpm install:*)",
       "Bash(pnpm run:*)",
       "Bash(pnpm test:*)",
