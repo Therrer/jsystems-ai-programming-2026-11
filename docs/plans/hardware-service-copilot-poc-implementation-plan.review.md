@@ -1,6 +1,6 @@
 # Review — Hardware Service Decision Copilot PoC implementation plan
 
-**Verdict: revision `821498c8…` awaiting human re-approval.** T00 and T01 were done under the approved revision `a2d1852f`. T02 and T03 are unchanged and stay approved; every other remaining task (T04–T28) needs re-approval of this revision before dispatch.
+**Verdict: revision `821498c8…` approved by the human on 2026-11-26 (see §5).** T00 and T01 were done under `a2d1852f`; execution continues with T02 and T03.
 
 ## 1. Reviewed revisions (2026-11-26)
 
@@ -80,3 +80,5 @@ Earlier findings in the same session (B1–B5, I1–I9, M1–M9) were fixed in t
 The plan file keeps `approval: draft` in its header on purpose: editing it would change the approved hash. This record is the approval.
 
 **2026-11-26:** this approval covered revision `a2d1852f`. On the human's request it was superseded by `821498c8…` (real-stack coverage and capture policy). Re-approval is pending; T02–T03 remain covered.
+
+**2026-11-26 re-approval:** the human approved revision `821498c830368460777dc2d725171c059b232e78f0186572a28ede155846e560` ("zatwierdzam 821498c8", checked on disk) and instructed "wykonuj T02 i T03" (execute T02 and T03). It covers T02–T28; the open consents (Issues are disabled again) are unchanged.
