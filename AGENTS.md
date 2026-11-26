@@ -14,6 +14,8 @@ Chat in Polish unless the user asks for another language. Repository documentati
 - `docs/PRD.md` — product requirements and acceptance criteria
 - `docs/ADR/` — Architecture Decision Records
 - `docs/design-guidelines.md` — design system and tokens
+- `docs/policies/` — return and complaint terms the application injects into its prompts at runtime; keep rule IDs (`R-x.y`, `C-x.y`) stable
+- `docs/plans/` — implementation plans and their task matrix
 
 ---
 
@@ -45,7 +47,7 @@ course-materials/    Notes, scripts, examples, research
 
 ### Looking up tool and library facts
 1. For CLI syntax (`gh`, `glab`, `codex`, build tools), run the tool's built-in help first: `<tool> --help` or `<tool> <command> --help`.
-2. For library and framework APIs, use current documentation through Context7 (`resolve-library-id`, then `query-docs`) and match it to the installed package version in the lockfile; major versions differ.
+2. For library and framework APIs, use current documentation through Context7: the CLI (`npx ctx7@latest library …`, then `npx ctx7@latest docs …`) or, when configured, the MCP tools (`resolve-library-id`, then `query-docs`) and match it to the installed package version in the lockfile; major versions differ.
 3. Search the web last, and prefer the vendor's official pages.
 
 ### TDD Rules
@@ -68,6 +70,8 @@ Investigate production code and fixtures before changing a failing assertion. Do
 
 ### Manual QA (required after every task that affects the running app)
 
+Code that the running app cannot reach yet (a module not wired into any route or screen) is verified by its tests only. Manual QA then happens in the first task that wires it in.
+
 Use the application's actual runtime and verified commands. The browser flow below applies to web applications; desktop applications need their real UI, and command-line tools need observable CLI checks.
 
 Use **the Playwright CLI** to drive the real running app like a human tester:
@@ -86,9 +90,9 @@ Verify only the scope relevant to your change. If the change affects runtime beh
 **Test Strategy:**
 | Type | Mocks | Who |
 |---|---|---|
-| Unit | All deps | be/fe-dev |
-| Integration | Only external LLM API | be-dev |
-| E2E | NOTHING (real stack) | qa-engineer |
+| Unit | All deps | implementer |
+| Integration | Only external LLM API | implementer |
+| E2E | NOTHING (real stack) | QA / coordinating agent |
 
 **Verification:** For runtime changes, start the real application and finish with Manual QA. Record compilation/build, test execution and startup as separate checks, including discovery counts and skips. A successful build or E2E run alone does not establish that the app works. Documentation-only changes use diff, link and consistency checks and do not require application startup. Fix errors and warnings introduced by the change; report pre-existing failures without hiding them.
 
@@ -97,6 +101,15 @@ Verify only the scope relevant to your change. If the change affects runtime beh
 ### Sub-agents
 - Prefer ad hoc subagents for one-off work. Reuse a named role only after checking its model and permissions; add a short custom definition (for example under `.claude/agents/` for Claude Code or `.codex/agents/` for Codex) only for a recurring need. The starting repository has no active custom roles.
 - Delegate bounded tasks with explicit dependencies and disjoint file ownership. The coordinating agent reviews diffs and verification evidence before committing.
+
+### Delegated workers
+If you were started with a task brief (for example `.agent-briefs/<task>.md`), the brief defines your scope and overrides the workflow above where they differ:
+- Edit only the files the brief lists. Report anything else that needs changing instead of changing it.
+- Do not commit, push, install packages, start the app or do Manual QA; the coordinating agent does that.
+- Use the documentation excerpts in the brief; do not look up other documentation unless the brief allows it.
+- Run only the checks the brief names. Other agents may be editing other files at the same time, so report errors outside your files instead of fixing them.
+- Never weaken, skip or delete a test. If the brief contradicts the PRD, an ADR or a test, stop and report the contradiction.
+- Finish with the report the brief asks for: files changed, commands run with their results, contradictions and open questions.
 
 ### Commit Rules
 - Commit only after verification passes and the changed scope is in a working state.
