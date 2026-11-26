@@ -396,14 +396,16 @@ sequenceDiagram
 
 ## 8. Testing Strategy
 
-Route handlers are tested by importing the exported `POST`/`GET`/`DELETE` functions and calling them with real `Request` objects (multipart built with `FormData` + `Blob` from fixture files). The AI layer is replaced through dependency injection: `CaseService` takes `LunaClient`, `VisionAnalyst`, `DecisionAgent` and `ChatAgent` factories, and tests pass mocks or `MockLanguageModelV4`. Fixture images: `assets/example-images/*`, plus generated ones stored in `app/tests/fixtures/images/`:
-- a 12 MB PNG,
-- a 1×1 JPEG,
-- a JPEG with EXIF GPS and orientation 6,
-- a HEIC sample,
-- a truncated/corrupt JPEG,
-- a 9000×9000 PNG (pixel limit),
-- an animated WebP.
+Route handlers are tested by importing the exported `POST`/`GET`/`DELETE` functions and calling them with real `Request` objects (multipart built with `FormData` + `Blob` from fixture files). The AI layer is replaced through dependency injection: `CaseService` takes `LunaClient`, `VisionAnalyst`, `DecisionAgent` and `ChatAgent` factories, and tests pass mocks or `MockLanguageModelV4`. Test images (decided by the human on 2026-11-26, variant b; see `assets/example-images/README.md`):
+- **Real photos:** only `assets/example-images/*` are used. `laptop-1.png` is a JPEG with a `.png` name, which tests format sniffing. `docs/PRD.md` serves as a real non-image file.
+- **Unit-test-only derived inputs:** image-processor unit tests may build in-memory buffers **derived from those real photos**:
+  - truncated bytes (corrupt file);
+  - padding past 10 MiB (size limit);
+  - a copy with EXIF orientation 6 and GPS set by sharp;
+  - an upscaled copy above 40 megapixels (pixel limit).
+
+  These buffers are never written to `assets/`, never uploaded through the form, and never sent to a model.
+- **Missing prerequisites:** real HEIC and animated WebP files. These cases stay untested until real files are added.
 
 ### Test scenarios for this area
 
