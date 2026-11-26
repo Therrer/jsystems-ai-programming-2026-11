@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "name": "health-200",
+    "capturedAt": "2026-11-26T12:28:10.259Z",
+    "task": "T21 app capture",
+    "label": "ok",
+    "durationMs": 1049
+  },
+  "request": {
+    "method": "GET",
+    "url": "/api/health",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "application/json",
+      "keep-alive": "timeout=5",
+      "transfer-encoding": "chunked",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding"
+    },
+    "body": {
+      "status": "ok",
+      "policies": {
+        "return": 21,
+        "complaint": 21
+      },
+      "decisionsEnabled": true,
+      "models": {
+        "vision": "openai/gpt-6-luna",
+        "decision": "openai/gpt-6-luna",
+        "chat": "openai/gpt-6-luna",
+        "decisions": "openai/gpt-6-luna-decisions"
+      }
+    }
+  }
+}

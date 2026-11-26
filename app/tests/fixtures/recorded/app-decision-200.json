@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "name": "decision-200",
+    "capturedAt": "2026-11-26T12:28:43.221Z",
+    "task": "T21 app capture",
+    "label": "ok",
+    "durationMs": 11876
+  },
+  "request": {
+    "method": "POST",
+    "url": "/api/cases/f6218e7f-dd72-43a1-b4e9-55d5b36bef05/decision",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "application/json",
+      "keep-alive": "timeout=5",
+      "transfer-encoding": "chunked",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding"
+    },
+    "body": {
+      "message": {
+        "id": "qRbfX6D7PPvnZe0I",
+        "role": "assistant",
+        "metadata": {
+          "createdAt": "2026-11-26T12:28:43.209Z"
+        },
+        "parts": [
+          {
+            "type": "text",
+            "text": "Dzień dobry! Jestem asystentem Example Electronics Store. Przeanalizowałem Twoje zgłoszenie: zwrot – Lenovo ThinkPad E14."
+          },
+          {
+            "type": "data-decision",
+            "data": {
+              "outcome": "ACCEPT",
+              "remedy": "REDUCED_REFUND",
+              "citedRuleIds": [
+                "R-2.1",
+                "R-3.3",
+                "R-6.2",
+                "R-6.3"
+              ],
+              "photoSummaryPl": "Na zdjęciu widać laptop z drobnymi śladami użytkowania na klawiaturze i podpórce dłoni. Nie widać pęknięć ani wyraźnych odkształceń.",
+              "justificationPl": "Zwracasz laptop w terminie. Zdjęcie pokazuje ślady użytkowania wykraczające poza samo sprawdzenie produktu, więc zwrot jest przyjęty z obniżeniem zwrotu o utratę wartości. Zespół serwisu ustali dokładne obniżenie po oględzinach.",
+              "nextStepsPl": [
+                "Wypełnij formularz zwrotu na stronie sklepu lub w salonie.",
+                "Spakuj laptop z akcesoriami i, jeśli to możliwe, oryginalnym opakowaniem; odeślij go lub dostarcz do punktu serwisowego.",
+                "Poczekaj na oględziny i potwierdzenie ostatecznej decyzji przez zespół serwisu."
+              ],
+              "clarifyingQuestionsPl": [],
+              "version": 1,
+              "source": "initial",
+              "appliedGuardrails": [],
+              "createdAt": "2026-11-26T12:28:43.209Z"
+            }
+          },
+          {
+            "type": "text",
+            "text": "### Co widzimy na zdjęciu\n\nNa zdjęciu widać laptop z drobnymi śladami użytkowania na klawiaturze i podpórce dłoni. Nie widać pęknięć ani wyraźnych odkształceń.\n\n### Uzasadnienie\n\nZwracasz laptop w terminie. Zdjęcie pokazuje ślady użytkowania wykraczające poza samo sprawdzenie produktu, więc zwrot jest przyjęty z obniżeniem zwrotu o utratę wartości. Zespół serwisu ustali dokładne obniżenie po oględzinach.\n\nPodstawa: R-2.1, R-3.3, R-6.2, R-6.3\n\n### Kolejne kroki\n\n1. Wypełnij formularz zwrotu na stronie sklepu lub w salonie.\n2. Spakuj laptop z akcesoriami i, jeśli to możliwe, oryginalnym opakowaniem; odeślij go lub dostarcz do punktu serwisowego.\n3. Poczekaj na oględziny i potwierdzenie ostatecznej decyzji przez zespół serwisu."
+          }
+        ]
+      }
+    }
+  }
+}

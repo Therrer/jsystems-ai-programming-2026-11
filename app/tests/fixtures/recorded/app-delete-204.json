@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "name": "delete-204",
+    "capturedAt": "2026-11-26T12:28:45.470Z",
+    "task": "T21 app capture",
+    "label": "ok",
+    "durationMs": 35
+  },
+  "request": {
+    "method": "DELETE",
+    "url": "/api/cases/f6218e7f-dd72-43a1-b4e9-55d5b36bef05",
+    "body": null
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "connection": "keep-alive",
+      "keep-alive": "timeout=5",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+    },
+    "body": null,
+    "rawText": ""
+  }
+}

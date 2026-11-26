@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "name": "chat-200-stream",
+    "capturedAt": "2026-11-26T12:28:45.339Z",
+    "task": "T21 app capture",
+    "label": "ok",
+    "durationMs": 2117
+  },
+  "request": {
+    "method": "POST",
+    "url": "/api/chat",
+    "body": {
+      "id": "<caseId>",
+      "message": {
+        "id": "capture-u1",
+        "role": "user",
+        "parts": [
+          {
+            "type": "text",
+            "text": "Jaki model zgłosiłem?"
+          }
+        ]
+      },
+      "trigger": "submit-message"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "cache-control": "no-cache",
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "text/event-stream",
+      "transfer-encoding": "chunked",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+      "x-accel-buffering": "no",
+      "x-vercel-ai-ui-message-stream": "v1"
+    },
+    "body": null,
+    "rawText": "data: {\"type\":\"start\",\"messageMetadata\":{\"createdAt\":\"2026-11-26T12:28:43.264Z\"},\"messageId\":\"iNORfdO6PQBFVMGg\"}\n\ndata: {\"type\":\"start-step\"}\n\ndata: {\"type\":\"text-start\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\"Z\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\"g\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\"ł\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\"osi\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\"łe\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\"ś\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\" laptop\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\" Lenovo\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\" Think\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\"Pad\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\" E\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\"14\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\",\"delta\":\".\"}\n\ndata: {\"type\":\"text-end\",\"id\":\"gen-1795696123-O6WAyyDaM7iooRVwER6g\"}\n\ndata: {\"type\":\"finish-step\"}\n\ndata: {\"type\":\"finish\",\"finishReason\":\"stop\"}\n\ndata: [DONE]\n\n"
+  }
+}

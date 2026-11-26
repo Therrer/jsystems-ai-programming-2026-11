@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "name": "cases-400-validation",
+    "capturedAt": "2026-11-26T12:28:45.373Z",
+    "task": "T21 app capture",
+    "label": "ok",
+    "durationMs": 31
+  },
+  "request": {
+    "method": "POST",
+    "url": "/api/cases",
+    "body": {
+      "multipart": {
+        "caseType": "return",
+        "category": "laptop",
+        "modelName": " ",
+        "purchaseDate": "2026-11-29",
+        "description": "",
+        "image": "laptop-2.webp (image/webp, real example photo)"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "application/json",
+      "keep-alive": "timeout=5",
+      "transfer-encoding": "chunked",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding"
+    },
+    "body": {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "messagePl": "Popraw zaznaczone pola.",
+        "fieldErrors": {
+          "modelName": "MODEL_NAME",
+          "purchaseDate": "PURCHASE_DATE"
+        }
+      }
+    }
+  }
+}

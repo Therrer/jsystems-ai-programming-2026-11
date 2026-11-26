@@ -82,6 +82,8 @@ export function createChatAgent(deps: {
         stream: toUIMessageStream({
           stream: result.stream,
           tools,
+          // The model's internal reasoning (English) must never reach the browser or the stored history (T21 finding).
+          sendReasoning: false,
           originalMessages,
           generateMessageId: generateId,
           messageMetadata: ({ part }) => (part.type === "start" ? { createdAt: now().toISOString() } : undefined),
