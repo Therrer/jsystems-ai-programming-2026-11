@@ -125,7 +125,7 @@ If the SDK call does not support an option we need, write `LunaClient` as a dire
 - Never decide accept or reject.
 - Write `observationsPl` in Polish, factual, at most 600 characters.
 
-**Output:** `ImageAnalysis` (section 4). Settings: temperature 0 if the model accepts it, and `providerOptions.openrouter.usage = { include: true }` for cost logging.
+**Output:** `ImageAnalysis` (section 4). Settings: usage accounting for cost logging (set in the provider). **No `temperature`:** `openai/gpt-6-luna` does not list it in `supported_parameters` (T04 `models-facts.json`), and with `require_parameters: true` an unsupported parameter leaves no eligible provider (503). Send only parameters the model supports.
 
 ### 3.4 Stage 3 — Gates (deterministic, before the decision)
 
