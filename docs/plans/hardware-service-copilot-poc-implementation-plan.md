@@ -80,6 +80,12 @@ Manual results are recorded separately from automated results and never replaced
 | Real-call evidence | Server log lines show the real model id and OpenRouter cost for each call, and the OpenRouter activity count matches the run | Required in T24 and T25 |
 | Review audit | R checks the production paths for mocks | T27 |
 
+**Test images:** [`assets/example-images/README.md`](../../assets/example-images/README.md) is binding:
+- upload tests use only those real photos, never generated, blurred or cropped images;
+- no test tells the model what a photo shows or assumes what it will see;
+- happy-path tests assert the decision's structure;
+- outcome assertions are limited to the timing gates and to the category mismatch that follows from the file name.
+
 **Real-stack coverage (E2E in T24 and manual tests in T25).** Both run on the production build with the real key and `DECISIONS_ENABLED=true`. Each item needs evidence; a green test alone is not evidence.
 
 | Item | E2E (T24) | Manual (T25) | Evidence |
@@ -92,7 +98,8 @@ Manual results are recorded separately from automated results and never replaced
 | Vision, decision and chat LLM calls | every case | every case | per-call log line with stage, model id and cost |
 | `updateDecision` tool call | — (model-driven, not deterministic) | MT for 4.5 | log line with an accepted tool call + `Decision` v2 |
 | Timing gates: in time, buffer, outside | return 5 / 18 / 30 days; complaint 400 days / 2 years + 3 days / 2 years + 30 days | same | rule IDs in the decision block |
-| Image gates: unusable photo, wrong category | blurred photo (real image with blur applied by the fixture script); phone photo with Laptop selected | same | "Wymaga weryfikacji" + the reason named |
+| Wrong-category gate | phone photo (`phone-*`) with Laptop selected | same | "Wymaga weryfikacji" + the reason named |
+| Unusable-photo gate | — (no real photo is known to be unusable, and generated or blurred images are forbidden) | every real photo in `assets/example-images/`, recording the model's actual assessment | gate tested in integration with capture-derived analysis (T07, T17, T19) |
 | Unclear cause → never Reject (AC-27) | — | MT with a photo that has no visible damage + a defect description | decision ≠ Reject |
 | AI failure (4.6) | — | restart with an invalid key | real 502 from our API, form keeps its values |
 
@@ -120,9 +127,9 @@ Scope names modules. O writes the exact paths, commands, test inputs and expecte
 | T03 | done `db89ed2` | Tooling, UI kit, AI dependencies, test runners | ADR-000 §2, §7, §10 TAC-01, TAC-02, §11 steps 7–11, TD-01; ADR-003 §2, TD-03 | T02 | O | manifests and lockfile, test configs, UI kit, env example, favicon, Streamdown CSS line | Controlled failing assertion fails then passes. The network blocker makes an OpenRouter call fail. The no-mock guard test fails on a deliberate `ai/test` import in `app/src` and passes once the import is removed. E2E smoke opens `/`. `App:` commit. |
 | T04 | done `f0b302f` | Compliant-endpoint check for each model with TD-10 privacy settings + model facts + raw captures (all made with those settings): Decisions (incl. a refusal attempt), structured with image, Decision-shaped, streamed chat, **streamed chat with a tool call**, errors 401/400/timeout/connection refused | ADR-000 §11 step 13, §12, TD-10; ADR-001 §2, §4; AGENTS.md capture rule | T03; key (H) | O + H | capture fixtures, capture script, ADR-000 §12 facts | Captures keep status, headers (no auth) and body. A missing vision capability goes to a proposed ADR change before T16. No compliant endpoint for a model → stop and escalate to H (TD-10). `App:` commit. |
 | T05 | done `93b06b7` | Shared schemas, date helpers, common strings | PRD AC-01–AC-11, AC-20–AC-22, AC-41, AC-42; ADR-001 §4; ADR-002 §4.1–4.2; ADR-003 §4 | T03 | O | `lib/shared` (except per-screen string files) | Red = behaviour assertions, e.g. a 19-code-point complaint description is rejected and tomorrow's date is invalid. Missing-module failures don't count. `App:` commit. |
-| T06 | running (Claude subagent, haiku; variant b) | E2E specs for flows 4.1–4.4, 4.7, validation, responsive and Polish UI, plus the real-stack coverage items in §4 (all endpoints, gates, LLM stages), failing on missing UI | PRD §4, AC-01–AC-15, AC-28–AC-45; ADR-003 §8; ADR-000 TAC-06 | T01, T05 | W | E2E specs and helpers | O runs E2E: the failures are "locator not found". `Tests:` commit. |
+| T06 | running (Claude subagent, haiku; variant b) | E2E specs for flows 4.1–4.4, 4.7, validation, responsive and Polish UI, plus the real-stack coverage items in §4 (all endpoints, gates, LLM stages), using only the real example photos (§4 test images), failing on missing UI | PRD §4, AC-01–AC-15, AC-28–AC-45; ADR-003 §8; ADR-000 TAC-06 | T01, T05 | W | E2E specs and helpers | O runs E2E: the failures are "locator not found". `Tests:` commit. |
 | T07 | todo | Timing windows, gates, decision guardrails | PRD AC-23–AC-27; ADR-001 §3.4–3.5, TD-07; TAC-001-01–04 | T01, T05 | W | `server/guardrails` | Table-driven Red→Green (windows, leap day, priority, money regex). `Backend:` commit. |
-| T08 | todo | Image validation and compression | PRD AC-09–AC-11, AC-16; ADR-002 §3.3, TD-201; ADR-000 TD-09; TAC-001-05 | T01, T05 | W | `server/image`, image fixtures + generator | Rotation and EXIF assertions. HEIC fixture per the brief's exception. `Backend:` commit. |
+| T08 | todo | Image validation and compression | PRD AC-09–AC-11, AC-16; ADR-002 §3.3, TD-201; ADR-000 TD-09; TAC-001-05 | T01, T05 | W | `server/image`, image fixtures + generator | Rotation and EXIF assertions. **Open decision before T08:** how invalid-file cases (12 MB, HEIC, corrupt, pixel limit) fit the example-images rules. `Backend:` commit. |
 | T09 | todo | Env, policy store, provider with the TD-10 privacy settings | PRD §8; ADR-000 §7, TD-01, TD-10; ADR-002 §3.4; ADR-001 §2 | T01, T05 | W | `server/env`, `server/policies`, `server/ai/provider` | Real policies load. A missing key names the variable. Every created model carries `data_collection: deny` and `zdr: true` (TAC-001-08). `Backend:` commit. |
 | T10 | todo | Case store, errors, logger | PRD AC-37; ADR-002 §3.2, §5.6, TD-205; ADR-000 TD-04 | T01, T05 | W | `server/cases/store`, errors, log | Fake-timer TTL, eviction and lock tests. `Backend:` commit. |
 | T11 | todo | Client flow reducer, leave warning | PRD §4.6 (client), AC-14, AC-15, AC-28, AC-37–AC-40; ADR-003 §3.2; TAC-003-01 | T01, T05 | W | `lib/client` reducer and hook | Every state-diagram transition tested. `Frontend:` commit. |
@@ -202,6 +209,7 @@ Draft → H reviews this plan and the [review](hardware-service-copilot-poc-impl
   - receipts and sequential validation (D6);
   - ignored QA directory;
   - review file and revision-bound approval.
+- 2026-11-26: example-images rules applied (human-approved): no blurred-photo E2E; the unusable-photo gate moves to manual testing with real photos plus integration tests; outcome assertions are limited to the deterministic gates. The T08 invalid-file fixtures are still an open decision.
 - 2026-11-26: agents checked against reality (OpenCode free models 401; OpenCode runs hanging at init since 09:56; Claude subagents working); research order (`--help` → Context7 → web) and research delegation for every agent; worker permission for `npx --yes ctx7@latest`, `npm view` and tool `--help`.
 - 2026-11-26: the Status column in §5 is the authoritative tracker; GitHub Issues become an optional mirror with the same `Txx` IDs (administrative change, approval kept).
 - 2026-11-26: PRD context, scale and regulation; ADR-000 TD-10 privacy settings (`data_collection: deny`, `zdr: true`) in T04, T09, T15–T18 and T21 (TAC-001-08); data-model and deployment diagrams in ADR-000 §9.4–9.5.

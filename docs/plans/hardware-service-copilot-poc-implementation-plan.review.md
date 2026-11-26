@@ -102,3 +102,5 @@ The plan file keeps `approval: draft` in its header on purpose: editing it would
 **2026-11-26 re-approval:** the human approved revision `2dee8f9fcc49eb3f6c59bbe223e69fddb7faef574f3dc94f2e453ba9f51671c2` ("zatwierdzam 2dee8f9f", checked on disk) and instructed "wykonuj T04" (execute T04). It covers T04–T28.
 
 **2026-11-26 re-approval:** the human approved revision `75ebca5d840153e554607d7ff39f0f74078fade213d6c77d75f6fbfa7e2479de` ("zatwierdzam 75ebca5d"). The file differs from it only in Status cells (checked by script). The human chose variant b: worker tasks run as Claude Code subagents (Haiku, escalating to Sonnet) while `opencode run` hangs. Instruction: "wykonuj T06" (execute T06).
+
+**2026-11-26 correction for the example-images rules:** the human approved the correction ("zatwierdzam poprawkę planu") in advance, for the scope O had described: T06, T24 and T25 follow `assets/example-images/README.md`. The revision that implements it is `c8d445d2828868b72ca3b0d124facc6f53e62e3e7719e45600c42064b1fa15af`. The T08 invalid-file fixtures stay an **open decision**, outside this approval.
