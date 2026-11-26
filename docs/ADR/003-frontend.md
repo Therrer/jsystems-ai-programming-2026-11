@@ -241,6 +241,34 @@ After the last part of any assistant message that contains a rendered `DecisionB
 
 ---
 
+### 3.6 UI selector contract (accessible names and test ids)
+
+Decided by the orchestrator on 2026-11-26 so that the E2E specs (T06) and the components (T12, T13, T14, T22) use the same names. E2E tests select by role and accessible name; `data-testid` is used only where no accessible name fits. Texts come from `lib/shared/strings`.
+
+| Element | Role / selector | Accessible name or text |
+|---|---|---|
+| Case type | `radiogroup` with 2 `radio` | group "Rodzaj zgłoszenia"; radios "Reklamacja", "Zwrot" |
+| Category | `combobox` (Radix Select), options `option` | "Kategoria sprzętu"; options = AC-03 labels |
+| Model name | `textbox` | "Nazwa lub model urządzenia" |
+| Purchase date | date input, label | "Data zakupu" |
+| Description | `textbox` (textarea) | starts with "Opis"; return variant "Opis (opcjonalnie)" |
+| Photo | file input, label | "Zdjęcie urządzenia" (Playwright `setInputFiles` on the labelled input) |
+| Submit | `button` | "Wyślij" |
+| Field error | text linked by `aria-describedby` | exact `lib/shared/strings` message |
+| Processing steps | text | "Analizuję zdjęcie…", "Przygotowuję decyzję…" |
+| Error banner | `alert` + `button` | message + "Spróbuj ponownie" |
+| Header action | `button` | "Nowa sprawa" |
+| New-case dialog | `alertdialog`, buttons | "Rozpocząć nową sprawę? Obecna rozmowa zostanie usunięta."; "Anuluj", "Nowa sprawa" |
+| Case summary | `region` | "Szczegóły sprawy" |
+| Chat message | `[data-testid="chat-message"]` with `data-role="assistant"` or `"user"` | — |
+| Decision block | `[data-testid="decision-block"]` with `data-outcome="ACCEPT"`, `"REJECT"` or `"MANUAL_REVIEW"` | outcome label (AC-20) and "Podstawa: R-x.y, …" |
+| Decision notice | text | AC-41 notice |
+| First-message sections | `heading` | "Co widzimy na zdjęciu", "Uzasadnienie", "Kolejne kroki", "Pytania do Ciebie" |
+| Chat input / send | `textbox`, `button` | "Wiadomość"; "Wyślij" |
+| Typing indicator | text | "Asystent pisze…" |
+| Failed message | text + `button` | "Nie wysłano"; "Ponów" |
+| Session expired | `alert` | "Sesja wygasła. Rozpocznij nową sprawę." |
+
 ## 4. Data Structures
 
 | Structure | Fields | Notes |

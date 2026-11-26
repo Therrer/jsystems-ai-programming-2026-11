@@ -1,6 +1,6 @@
 # Review — Hardware Service Decision Copilot PoC implementation plan
 
-**Verdict: revision `75ebca5d…` awaiting re-approval for worker tasks.**
+**Verdict: revision `75ebca5d…` approved by the human on 2026-11-26 (see §5); worker tasks run as Claude subagents (variant b).**
 - `2dee8f9f` (approved) still covers T04 and T05: O-only tasks whose rows didn't change.
 - The new fallback models and workers and the research rules change the runner/model boundary, so the first worker dispatch (T06) needs re-approval.
 
@@ -100,3 +100,5 @@ The plan file keeps `approval: draft` in its header on purpose: editing it would
 **2026-11-26 re-approval (`821498c8`, later superseded by `2dee8f9f`, which is pending):** the human approved revision `821498c830368460777dc2d725171c059b232e78f0186572a28ede155846e560` ("zatwierdzam 821498c8", checked on disk) and instructed "wykonuj T02 i T03" (execute T02 and T03). It covers T02–T28; the open consents (Issues are disabled again) are unchanged.
 
 **2026-11-26 re-approval:** the human approved revision `2dee8f9fcc49eb3f6c59bbe223e69fddb7faef574f3dc94f2e453ba9f51671c2` ("zatwierdzam 2dee8f9f", checked on disk) and instructed "wykonuj T04" (execute T04). It covers T04–T28.
+
+**2026-11-26 re-approval:** the human approved revision `75ebca5d840153e554607d7ff39f0f74078fade213d6c77d75f6fbfa7e2479de` ("zatwierdzam 75ebca5d"). The file differs from it only in Status cells (checked by script). The human chose variant b: worker tasks run as Claude Code subagents (Haiku, escalating to Sonnet) while `opencode run` hangs. Instruction: "wykonuj T06" (execute T06).
