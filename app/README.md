@@ -58,3 +58,16 @@ Use this checklist during scaffolding. Some items are provided by the boilerplat
 - Don't create config files manually if the boilerplate provides them — it leads to conflicts.
 - Let the agent research and recommend the right boilerplate based on the ADR decisions.
 - Keep this folder organized: separate routes, components, domain logic, and tests.
+
+## Hardware Service Decision Copilot — running the app
+
+Next.js 16 (App Router, TypeScript strict) scaffolded with `create-next-app` per [ADR-000 §11](../docs/ADR/000-main-architecture.md#11-project-initialization-from-the-empty-app-folder). Requirements: [PRD](../docs/PRD.md); implementation plan: [docs/plans](../docs/plans/hardware-service-copilot-poc-implementation-plan.md). Run all commands in `app/` (Node.js 22 or newer).
+
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Development server on <http://localhost:3000> |
+| `npm run build` / `npm start` | Production build / start it |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript check (`tsc --noEmit`) |
+
+Test commands and environment variables are added in task T03.
