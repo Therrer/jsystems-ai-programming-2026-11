@@ -2,7 +2,7 @@
 
 > **Do not execute: draft awaiting human review. Execution requires an explicit human instruction naming this reviewed revision** (the SHA-256 recorded in the [review](hardware-service-copilot-poc-implementation-plan.review.md)).
 
-`approval: draft` · 2026-11-26 · scope: the whole PoC in [PRD](../PRD.md) · out of scope: [PRD §7](../PRD.md#7-out-of-scope)
+`approval: draft` (revision after `a2d1852f`; T02–T03 are unchanged and stay approved, every other remaining task needs re-approval) · 2026-11-26 · scope: the whole PoC in [PRD](../PRD.md) · out of scope: [PRD §7](../PRD.md#7-out-of-scope)
 
 ## 1. Sources and responsibilities
 
@@ -72,6 +72,32 @@ Manual results are recorded separately from automated results and never replaced
 | Real-call evidence | Server log lines show the real model id and OpenRouter cost for each call, and the OpenRouter activity count matches the run | Required in T24 and T25 |
 | Review audit | R checks the production paths for mocks | T27 |
 
+**Real-stack coverage (E2E in T24 and manual tests in T25).** Both run on the production build with the real key and `DECISIONS_ENABLED=true`. Each item needs evidence; a green test alone is not evidence.
+
+| Item | E2E (T24) | Manual (T25) | Evidence |
+|---|---|---|---|
+| `POST /api/cases`, `POST …/decision` | every flow | every MT case | Playwright network log, server log |
+| `POST /api/chat` | 4.1, 4.2 (one follow-up each, AC-34) | MT for 4.1, 4.5 | stream response, server log |
+| `DELETE /api/cases/{id}` | 4.7 (asserted with `waitForRequest`) | MT for 4.7 | 204 in network log |
+| `GET /api/health` | readiness check + assertion of the counts | checked once | response body |
+| Luna Decisions call | every case | every case | eval log line with `luna.status` = `ok` or `partial`; a run with `unavailable` fails the check |
+| Vision, decision and chat LLM calls | every case | every case | per-call log line with stage, model id and cost |
+| `updateDecision` tool call | — (model-driven, not deterministic) | MT for 4.5 | log line with an accepted tool call + `Decision` v2 |
+| Timing gates: in time, buffer, outside | return 5 / 18 / 30 days; complaint 400 days / 2 years + 3 days / 2 years + 30 days | same | rule IDs in the decision block |
+| Image gates: unusable photo, wrong category | blurred photo (real image with blur applied by the fixture script); phone photo with Laptop selected | same | "Wymaga weryfikacji" + the reason named |
+| Unclear cause → never Reject (AC-27) | — | MT with a photo that has no visible damage + a defect description | decision ≠ Reject |
+| AI failure (4.6) | — | restart with an invalid key | real 502 from our API, form keeps its values |
+
+Corrective retry and template fallback depend on the model breaking a rule and can't be triggered on demand without a test switch in production code, which the no-mock guard forbids. They are tested in integration only (see the capture policy), and every real occurrence is logged with `appliedGuardrails`. **Limitation:** not exercised end-to-end on demand.
+
+**Capture policy (unit and integration mocks):**
+- Every mock of an external response comes from a file in `tests/fixtures/recorded/`, holding the real request (no auth), status, headers, body and date. Each fixture's metadata names its capture.
+- **Derived fixture:** a real capture with listed edits (for example a removed answer key, or a changed `outcome` to create a rule violation). Edits may delete or change values, but never invent a new response shape.
+- No response shape is taken from documentation. If a real capture can't be obtained safely, the test asserts only on what is real, and the gap is reported in the review as a missing prerequisite.
+- **Real error captures (T04):** 401 (invalid key), 400 (unknown model id), a real timeout (tiny timeout against the real endpoint), connection refused (unreachable base URL).
+- **429/502/503:** can't be triggered safely. They are tested only as a status-code → domain-error mapping on the numeric code, with no invented body.
+- **Luna refusal:** T04 tries to trigger one with a photo that contains no device. If OpenRouter returns no refusal, refusal handling has no fixture and is listed as a missing prerequisite. Missing-key and unexpected-type cases use derived fixtures.
+
 ## 5. Task matrix (authoritative)
 
 Scope names modules. O writes the exact paths, commands, test inputs and expected results into each brief at dispatch.
@@ -82,9 +108,9 @@ Scope names modules. O writes the exact paths, commands, test inputs and expecte
 | T01 | Worker harness, QA directory, runner guide in operation | [Runner guide](../agents/opencode-headless.md) | T00; H consents | O | `/opencode.json`, `/.gitignore`, `/.agent-briefs/`, `/.claude/settings.json` (one rule) | Merged permissions checked with `opencode debug config`. Smoke run log shows the push denial. `git check-ignore -v` on `artifacts/qa/` and `.agent-runs/`. `Agents:` commit. |
 | T02 | Next.js scaffold starts | ADR-000 §11 steps 1–6, 9, TD-02, TD-08 | T00 | O | `app/` (generated), app README, `app/CLAUDE.md` | Typecheck, lint and build pass. Dev server screenshot saved to the QA directory. `App:` commit. |
 | T03 | Tooling, UI kit, AI dependencies, test runners | ADR-000 §2, §7, §10 TAC-01, TAC-02, §11 steps 7–11, TD-01; ADR-003 §2, TD-03 | T02 | O | manifests and lockfile, test configs, UI kit, env example, favicon, Streamdown CSS line | Controlled failing assertion fails then passes. The network blocker makes an OpenRouter call fail. The no-mock guard test fails on a deliberate `ai/test` import in `app/src` and passes once the import is removed. E2E smoke opens `/`. `App:` commit. |
-| T04 | Model facts + 4 raw captures (Decisions, structured with image, Decision-shaped, streamed chat) | ADR-000 §11 step 13, §12; ADR-001 §2, §4; AGENTS.md capture rule | T03; key (H) | O + H | capture fixtures, capture script, ADR-000 §12 facts | Captures keep status, headers (no auth) and body. A missing vision capability goes to a proposed ADR change before T16. `App:` commit. |
+| T04 | Model facts + raw captures: Decisions (incl. a refusal attempt), structured with image, Decision-shaped, streamed chat, **streamed chat with a tool call**, errors 401/400/timeout/connection refused | ADR-000 §11 step 13, §12; ADR-001 §2, §4; AGENTS.md capture rule | T03; key (H) | O + H | capture fixtures, capture script, ADR-000 §12 facts | Captures keep status, headers (no auth) and body. A missing vision capability goes to a proposed ADR change before T16. `App:` commit. |
 | T05 | Shared schemas, date helpers, common strings | PRD AC-01–AC-11, AC-20–AC-22, AC-41, AC-42; ADR-001 §4; ADR-002 §4.1–4.2; ADR-003 §4 | T03 | O | `lib/shared` (except per-screen string files) | Red = behaviour assertions, e.g. a 19-code-point complaint description is rejected and tomorrow's date is invalid. Missing-module failures don't count. `App:` commit. |
-| T06 | E2E specs for flows 4.1–4.4, 4.7, validation, responsive and Polish UI, failing on missing UI | PRD §4, AC-01–AC-15, AC-28–AC-45; ADR-003 §8; ADR-000 TAC-06 | T01, T05 | W | E2E specs and helpers | O runs E2E: the failures are "locator not found". `Tests:` commit. |
+| T06 | E2E specs for flows 4.1–4.4, 4.7, validation, responsive and Polish UI, plus the real-stack coverage items in §4 (all endpoints, gates, LLM stages), failing on missing UI | PRD §4, AC-01–AC-15, AC-28–AC-45; ADR-003 §8; ADR-000 TAC-06 | T01, T05 | W | E2E specs and helpers | O runs E2E: the failures are "locator not found". `Tests:` commit. |
 | T07 | Timing windows, gates, decision guardrails | PRD AC-23–AC-27; ADR-001 §3.4–3.5, TD-07; TAC-001-01–04 | T01, T05 | W | `server/guardrails` | Table-driven Red→Green (windows, leap day, priority, money regex). `Backend:` commit. |
 | T08 | Image validation and compression | PRD AC-09–AC-11, AC-16; ADR-002 §3.3, TD-201; ADR-000 TD-09; TAC-001-05 | T01, T05 | W | `server/image`, image fixtures + generator | Rotation and EXIF assertions. HEIC fixture per the brief's exception. `Backend:` commit. |
 | T09 | Env, policy store, provider | PRD §8; ADR-000 §7, TD-01; ADR-002 §3.4; ADR-001 §2 | T01, T05 | W | `server/env`, `server/policies`, `server/ai/provider` | Real policies load. A missing key names the variable. `Backend:` commit. |
@@ -93,17 +119,17 @@ Scope names modules. O writes the exact paths, commands, test inputs and expecte
 | T12 | Form components | PRD AC-01–AC-15, AC-42, §9.2; ADR-003 §3.3, TD-301, TD-302; TAC-003-02, TAC-003-03 | T01, T05 | W | `components/case-form`, form strings | Focus on the first invalid field, HEIC rejection, conditional description. `Frontend:` commit. |
 | T13 | Chat presentation components | PRD AC-29–AC-31, AC-35, AC-39, AC-41, §9.3–9.4; ADR-003 §3.4; ADR-001 TD-103; TAC-003-02, TAC-003-03 | T01, T05 | W | `components/case-chat` (except its container), chat strings | Part order and notice asserted. Props come from T05 schemas and are rechecked in T22. `Frontend:` commit. |
 | T14 | Tokens, layout, wordmark header | PRD AC-43–AC-45, §9.1; ADR-003 §3.5; design guidelines | T01, T03, T05 | W | `globals.css` token block, layout, header | O compares a screenshot with `assets/homepage.png`. `Frontend:` commit. |
-| T15 | Luna client (never throws) | ADR-001 §3.2, TD-05, TD-105; TAC-001-06 | T04, T09 | W | `server/ai/luna` + Luna prompt | Mocks from the T04 Decisions capture. Refusal and timeout cases. `Backend:` commit. |
+| T15 | Luna client (never throws) | ADR-001 §3.2, TD-05, TD-105; TAC-001-06 | T04, T09 | W | `server/ai/luna` + Luna prompt | Mocks from the T04 Decisions capture. Refusal only if a real refusal was captured; missing-key and unexpected-type cases use derived fixtures; timeout via the real timeout capture. `Backend:` commit. |
 | T16 | Vision stage | PRD AC-17–AC-19; ADR-001 §3.3, TD-101, TD-102 | T04, T08, T09 | W | `server/ai/vision` + prompt | One `image/webp` file part asserted. Mock from the T04 capture. `Backend:` commit. |
 | T17 | Decision agent + first-message renderer | PRD AC-20–AC-29, AC-41; ADR-001 §3.5–3.7, TD-103 | T04, T07, T09 | W | `server/ai/decision`, renderer, prompt | Mock from the Decision-shaped capture. Forced outcome and fallback (AC-24). `Backend:` commit. |
-| T18 | Chat agent + `updateDecision` tool | PRD §4.5, AC-34, AC-36, AC-43, §11; ADR-001 §3.8, TD-104 | T04, T07, T09, T10 | W | `server/ai/chat` + prompt | Stream mock from the T04 stream capture. Context capture test (AC-34). `Backend:` commit. |
-| T19 | Case service + eval log | PRD AC-28, §4.6 (server); ADR-002 §3.5, §5.1–5.2, TD-202; ADR-000 TD-06; ADR-001 §3.9; TAC-001-07, TAC-002-03 | T08, T10, T15–T17 | W | `server/cases/service`, eval log | Vision-failure cleanup, idempotent decide, image cleared. `Backend:` commit. |
-| T20 | API routes | PRD AC-32, AC-35–AC-37; ADR-002 §5, TD-201–TD-203; ADR-000 TD-06; TAC-002-01–06 | T18, T19 | W | `app/api` routes | Every error row in ADR-002 §5.6 tested. `Backend:` commit. |
-| T21 | Real endpoint capture | AGENTS.md capture rule; ADR-000 §10; ADR-002 TD-204 | T20; key (H) | O + H | recorded fixtures, fixture corrections | Health 200 on the production build. Mocks reconciled with the capture. `Tests:` commit. |
+| T18 | Chat agent + `updateDecision` tool | PRD §4.5, AC-34, AC-36, AC-43, §11; ADR-001 §3.8, TD-104 | T04, T07, T09, T10 | W | `server/ai/chat` + prompt | Stream mocks from the T04 plain and tool-call stream captures. Context capture test (AC-34). `Backend:` commit. |
+| T19 | Case service + eval log | PRD AC-28, §4.6 (server); ADR-002 §3.5, §5.1–5.2, TD-202; ADR-000 TD-06; ADR-001 §3.9; TAC-001-07, TAC-002-03 | T08, T10, T15–T17 | W | `server/cases/service`, eval log | Fake dependencies return objects parsed from captures, and failures use the real-captured error classes. Vision-failure cleanup, idempotent decide, image cleared. `Backend:` commit. |
+| T20 | API routes | PRD AC-32, AC-35–AC-37; ADR-002 §5, TD-201–TD-203; ADR-000 TD-06; TAC-002-01–06 | T18, T19 | W | `app/api` routes | Every error row in ADR-002 §5.6 tested; AI errors come from real-captured provider errors (capture policy). `Backend:` commit. |
+| T21 | Real captures with final prompts: per stage (Luna, vision, decision, chat incl. tool call), our API success responses, our API errors (400, 404, 413, 415, and 502 with an invalid key), and one real eval-log line | AGENTS.md capture rule; ADR-000 §10; ADR-002 TD-204 | T20; key (H) | O + H | recorded fixtures, capture script, fixture corrections | Health 200 on the production build. Every mock from T15–T20 is reconciled with the final captures; a mismatch reopens that task. `Tests:` commit. |
 | T22 | Wired UI flow | PRD §4.1–4.7, §9.5, AC-14–AC-15, AC-28–AC-40; ADR-003 §3.2, §3.4, §5, TD-303, TD-304; TAC-003-01, TAC-003-05 | T11–T14, T21 | W (escalate after 2 failures) | app shell, page, client API, chat transport, chat container | Fetch mocks from the T21 capture. O walks the return flow by hand. `Frontend:` commit. |
-| T23 | Eval report script | ADR-001 §3.9, TD-05 | T19 | W | report script + test (O adds the npm script) | Fixture JSONL gives the expected table. `Tools:` commit. |
-| T24 | E2E green | ADR-000 TAC-06; ADR-003 §8; PRD §4 | T06, T22 | O (fixes via W briefs) | production code via briefs; E2E selectors only, never assertions | Pass/fail/skip counts and OpenRouter cost recorded. Real-call evidence: per-call log lines with model id and cost, and the OpenRouter activity count for the run. The no-mock guard is green. `Tests:` commit. |
-| T25 | Manual test pass `MT-xx` for every PRD flow §4.1–4.7 (4.6 via a restart with an invalid key) and every AC group, on the real stack without mocks | AGENTS.md Manual QA; ADR-003 TAC-003-02, TAC-003-04, TAC-003-06; PRD AC-43–AC-45 | T24 | O + H | `docs/qa/poc-manual-qa.md` (screenshots stay in the QA directory) | Report with steps, expected and actual results, and local screenshot links. Real-call evidence attached, no-mock guard green, Lighthouse a11y ≥ 90. Failures go to new W briefs. `Docs:` commit. |
+| T23 | Eval report script | ADR-001 §3.9, TD-05 | T19, T21 | W | report script + test (O adds the npm script) | The JSONL fixture comes from the real T21 eval-log line (derived copies for buckets) and gives the expected table. `Tools:` commit. |
+| T24 | E2E green | ADR-000 TAC-06; ADR-003 §8; PRD §4 | T06, T22 | O (fixes via W briefs) | production code via briefs; E2E selectors only, never assertions | Pass/fail/skip counts and OpenRouter cost recorded. Real-call evidence: per-call log lines with model id and cost, and the OpenRouter activity count for the run. The no-mock guard is green. Every real-stack coverage item in §4 has its evidence. `Tests:` commit. |
+| T25 | Manual test pass `MT-xx` for every PRD flow §4.1–4.7 (4.6 via a restart with an invalid key), every AC group and every real-stack coverage item in §4, without mocks | AGENTS.md Manual QA; ADR-003 TAC-003-02, TAC-003-04, TAC-003-06; PRD AC-43–AC-45 | T24 | O + H | `docs/qa/poc-manual-qa.md` (screenshots stay in the QA directory) | Report with steps, expected and actual results, and local screenshot links. Real-call evidence attached, no-mock guard green, Lighthouse a11y ≥ 90. Failures go to new W briefs. `Docs:` commit. |
 | T26 | App docs; ADR facts | ADR-000 §11 steps 4–5, §12 | T24 | W (app docs), O (ADR facts, separate commit) | app README, AGENTS, CLAUDE | Link and consistency check. `Docs:` commits. |
 | T27 | Independent review | AGENTS.md Code Review Rules; ADR-000 TAC-01–07; ADR-003 TAC-003-01, TAC-003-03, TAC-003-05 | T23, T25, T26 | R + H | fixes via W briefs | Full re-verification, including an audit for mocks in production paths. Findings table goes into the PR. |
 | T28 | PR (not merged) | AGENTS.md Commit Rules | T27; H says "push" | O + H | — | PR targeting the D2 base. Merging is H's decision. |
@@ -147,7 +173,7 @@ Scope names modules. O writes the exact paths, commands, test inputs and expecte
 - **Decisions API fails:** set `DECISIONS_ENABLED=false` (ADR-000 TD-05).
 - **OpenRouter 402 or 429 during E2E:** stop and report to H.
 - **Fallback scopes**, each recorded in the PRD before use:
-  - **F1:** no Luna, no eval report, chat without the update tool.
+  - **F1:** no Luna, no eval report, chat without the update tool. This removes real coverage of the Luna call and the tool call, which must be recorded.
   - **F2:** F1 without the follow-up chat.
   - **F3:** O executes sequentially without workers.
 
@@ -164,4 +190,5 @@ Draft → H reviews this plan and the [review](hardware-service-copilot-poc-impl
   - receipts and sequential validation (D6);
   - ignored QA directory;
   - review file and revision-bound approval.
+- 2026-11-26: real-stack coverage matrix (all endpoints, LLM stages, gates, Luna proof), capture policy (no documentation-derived shapes; derived fixtures; real error and tool-call captures; final-prompt re-capture in T21); T23 now depends on T21.
 - 2026-11-26: added an explicit manual test pass (MT cases in T25, manual checks in T02/T14/T22) and no-mock checks (guard test in T03, real-call evidence in T24/T25, audit in T27).

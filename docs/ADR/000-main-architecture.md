@@ -499,7 +499,7 @@ See 001 for the `updateDecision` tool flow and 002 for chat error handling.
 
 ### Philosophy
 
-TDD per AGENTS.md: write tests from the PRD acceptance criteria and these ADRs first, see them fail, then implement. Deterministic logic (dates, guardrails, schemas, image processing, rendering) is fully unit-tested. AI calls are integration-tested with `MockLanguageModelV4` and a fake `LunaClient`. Mocks are derived from **recorded real responses**: one real Luna response and one real structured output per role, captured once with synthetic images from `assets/example-images/` and stored in `tests/fixtures/recorded/` with date, model id and request (AGENTS.md rule). E2E uses the real stack and the real OpenRouter, without mocks.
+TDD per AGENTS.md: write tests from the PRD acceptance criteria and these ADRs first, see them fail, then implement. **Capture policy:** mocked external responses come only from real recorded calls, or from real captures with listed edits. No response shape is taken from documentation, and anything that can't be captured safely is reported as a missing prerequisite. The plan's §4 defines the capture list and the real-stack coverage for E2E and manual tests. Deterministic logic (dates, guardrails, schemas, image processing, rendering) is fully unit-tested. AI calls are integration-tested with `MockLanguageModelV4` and a fake `LunaClient`. Mocks are derived from **recorded real responses**: one real Luna response and one real structured output per role, captured once with synthetic images from `assets/example-images/` and stored in `tests/fixtures/recorded/` with date, model id and request (AGENTS.md rule). E2E uses the real stack and the real OpenRouter, without mocks.
 
 ### Test layers
 

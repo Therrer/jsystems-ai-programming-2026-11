@@ -1,6 +1,6 @@
 # Review — Hardware Service Decision Copilot PoC implementation plan
 
-**Verdict: approved by the human on 2026-11-26 (see §5). Execution started with T00.** The earlier verdict was "blocked — human decision required".
+**Verdict: revision `821498c8…` awaiting human re-approval.** T00 and T01 were done under the approved revision `a2d1852f`. T02 and T03 are unchanged and stay approved; every other remaining task (T04–T28) needs re-approval of this revision before dispatch.
 
 ## 1. Reviewed revisions (2026-11-26)
 
@@ -8,7 +8,7 @@ The repository is at `design-system` @ `7b3e347` (a merge of `main`, adding cour
 
 | File | SHA-256 |
 |---|---|
-| `docs/plans/hardware-service-copilot-poc-implementation-plan.md` | `a2d1852ff936509260658e104556a54592cbc885526d61b70da54acdb573f09d` (full; this is the revision to approve; it supersedes `1a1d4b06…`) |
+| `docs/plans/hardware-service-copilot-poc-implementation-plan.md` | `821498c830368460777dc2d725171c059b232e78f0186572a28ede155846e560` (full; current revision, awaiting re-approval). It supersedes the approved `a2d1852f…` (see §5) and the earlier `1a1d4b06…`. |
 | `docs/PRD.md` | `a5417b3106758210…` |
 | `docs/ADR/000-main-architecture.md` | `11ef7f72e5b41dca…` |
 | `docs/ADR/001-ai-pipeline.md` | `b26594c1643c7cab…` |
@@ -48,6 +48,7 @@ The repository is at `design-system` @ `7b3e347` (a merge of `main`, adding cour
 | No accepted receipt; workers validated against other workers' uncommitted files | Receipt (SHA, evidence, note) required; sequential default (D6) |
 | Screenshots were committed in T25 | Gitignored QA directory; the report links locally |
 | No review file and no revision-bound approval | This file + a directive naming the SHA-256 |
+| Human request: E2E and manual tests must use the real app (every endpoint, LLM call and decision method), and unit/integration mocks must come from real captures | The plan's §4 now has a real-stack coverage matrix: all 5 endpoints, all 4 LLM stages, proof that Luna was called, timing and image gates through real inputs, the tool call and AI failure covered manually. A capture policy was added: no documentation-derived shapes, derived fixtures are allowed only as edits of real captures, real 401/400/timeout/connection-refused and tool-call captures in T04, and a re-capture with final prompts plus our API errors in T21. T23 depends on T21. ADR-000 §10 and TAC-001-06 are aligned. |
 | Human request: manual tests in addition to automated tests, and no mocks | T25 runs one manual test case per PRD flow and AC group on the real stack, with manual checks in T02, T14 and T22. A no-mock guard test is created in T03; T24/T25 require real-call evidence; T27 audits production paths for mocks. On 2026-11-26 `app/` has no code, so there are no mocks yet. |
 
 Earlier findings in the same session (B1–B5, I1–I9, M1–M9) were fixed in the PRD, ADRs, AGENTS.md and CLAUDE.md. They are summarized in the plan's revision line.
@@ -55,6 +56,10 @@ Earlier findings in the same session (B1–B5, I1–I9, M1–M9) were fixed in t
 ## 4. Limits and open items
 
 - **Size:** 2,514 words is about 25 % over the ~2,000-word target. The main cause is keeping a criterion ID on each of the 29 rows, plus the manual-test and no-mock tables the human asked for; compressing further would drop traceability or those checks.
+- **Missing prerequisites under the capture policy:**
+  - 429, 502 and 503 from OpenRouter can't be captured safely. They are tested only through the numeric status-code mapping.
+  - A Luna refusal is tested only if T04 manages to capture one for real.
+  - Corrective retry and template fallback can't be triggered end-to-end on demand. They are tested in integration with derived fixtures, and real occurrences are logged.
 - **Unverified facts** (a T04 gate): `gpt-6-luna` image and structured-output support, and the `gpt-6-luna-decisions` metadata. The OpenCode 1.19 permission format is checked in T01.
 - **Open decisions:** D1 (a second, different PRD in branch `worktree-prd-service-copilot`), D2, D4, D5, D6.
 - **Consents:** creating GitHub issues and labels, the `Bash(opencode run:*)` allow rule, running workers.
@@ -73,3 +78,5 @@ Earlier findings in the same session (B1–B5, I1–I9, M1–M9) were fixed in t
 | Not yet consented | Creating GitHub issues and labels, the `Bash(opencode run:*)` allow rule, running OpenCode workers. These are needed from T01 on. |
 
 The plan file keeps `approval: draft` in its header on purpose: editing it would change the approved hash. This record is the approval.
+
+**2026-11-26:** this approval covered revision `a2d1852f`. On the human's request it was superseded by `821498c8…` (real-stack coverage and capture policy). Re-approval is pending; T02–T03 remain covered.
