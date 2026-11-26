@@ -11,6 +11,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Project rules (Hardware Service Decision Copilot)
 
 - Requirements and architecture: [PRD](../docs/PRD.md), [ADRs](../docs/ADR/), [design guidelines](../docs/design-guidelines.md); the root [`AGENTS.md`](../AGENTS.md) workflow applies (TDD, Manual QA, commits, *Delegated workers*).
-- Run every npm command in `app/`. Verified commands: `npm run dev`, `npm run build`, `npm start`, `npm run lint`, `npm run typecheck`.
+- Run every npm command in `app/`. Verified commands: `npm run dev`, `npm run build`, `npm start`, `npm run lint`, `npm run typecheck`, `npm test` (Vitest: node + jsdom projects, network and no-mock guards), `npm run test:watch`, `npm run test:e2e` (Playwright on the production build, real stack).
 - `src/server/**` is server-only (each module imports `server-only`); `src/components/**` never imports from `src/server`. Shared code lives in `src/lib/shared` (ADR-000 §4).
 - Never commit `.env.local`; never use Eurocash logos, favicon or name (PRD AC-45).

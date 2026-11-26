@@ -69,5 +69,7 @@ Next.js 16 (App Router, TypeScript strict) scaffolded with `create-next-app` per
 | `npm run build` / `npm start` | Production build / start it |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript check (`tsc --noEmit`) |
+| `npm test` / `npm run test:watch` | Unit, integration and component tests (Vitest 5; external network blocked) |
+| `npm run test:e2e` | E2E on the production build with the real stack (Playwright) |
 
-Test commands and environment variables are added in task T03.
+Environment: copy `.env.example` to `.env.local` and set `OPENROUTER_API_KEY` (ADR-000 §7). Never commit `.env.local`.
