@@ -66,7 +66,8 @@ test.describe("case form validation and layout", () => {
     await expect(page.getByText(fieldErrorMessage("category", "REQUIRED"))).toBeVisible();
     await expect(page.getByText(fieldErrorMessage("modelName", "REQUIRED"))).toBeVisible();
     await expect(page.getByText(fieldErrorMessage("purchaseDate", "REQUIRED"))).toBeVisible();
-    await expect(page.getByText(fieldErrorMessage("image", "REQUIRED"))).toBeVisible();
+    // exact: the intro sentence "Wypełnij formularz i dodaj zdjęcie urządzenia…" contains the same words (T24 selector fix).
+    await expect(page.getByText(fieldErrorMessage("image", "REQUIRED"), { exact: true })).toBeVisible();
     expect(caseRequests).toEqual([]);
   });
 
