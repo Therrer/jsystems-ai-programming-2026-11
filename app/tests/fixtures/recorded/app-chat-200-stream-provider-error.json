@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "name": "chat-200-stream-provider-error",
+    "capturedAt": "2026-11-27T09:12:34.694Z",
+    "task": "T27 F1 reproduction",
+    "label": "provider error after the stream started",
+    "how": "Production build (6fe23ef + docs) started with CHAT_MODEL=openai/qa-nonexistent-model (process env only; vision and decision used the real gpt-6-luna). Case created through the UI with laptop-2.webp, then this request was sent from the page with fetch. Server log: chat_failed AI_UNAVAILABLE."
+  },
+  "request": {
+    "method": "POST",
+    "url": "/api/chat",
+    "body": {
+      "id": "<caseId>",
+      "message": {
+        "id": "qaReplayMsg0001",
+        "role": "user",
+        "parts": [
+          {
+            "type": "text",
+            "text": "Ile dni mam na zwrot?"
+          }
+        ],
+        "metadata": {
+          "createdAt": "<client time>"
+        }
+      },
+      "trigger": "submit-message"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "cache-control": "no-cache",
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "text/event-stream",
+      "transfer-encoding": "chunked",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+      "x-accel-buffering": "no",
+      "x-vercel-ai-ui-message-stream": "v1"
+    },
+    "body": null,
+    "rawText": "data: {\"type\":\"start\",\"messageMetadata\":{\"createdAt\":\"2026-11-27T09:12:34.694Z\"},\"messageId\":\"DcBSCOOnWy0i6QqU\"}\n\ndata: {\"type\":\"error\",\"errorText\":\"Nie udało się uzyskać odpowiedzi. Spróbuj ponownie.\"}\n\ndata: [DONE]\n\n"
+  }
+}

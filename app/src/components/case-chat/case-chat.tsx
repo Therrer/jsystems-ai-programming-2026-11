@@ -52,6 +52,17 @@ const TIME_FORMAT = new Intl.DateTimeFormat("pl-PL", {
 
 const formatTime = (date: Date) => TIME_FORMAT.format(date);
 
+/** An assistant message with nothing to show: no text, tool or data part (only step markers). */
+function isEmptyReply(message: CaseUIMessage | undefined): boolean {
+  if (!message || message.role !== "assistant") return false;
+  return !message.parts.some(
+    (part) =>
+      (part.type === "text" && part.text.trim().length > 0) ||
+      part.type.startsWith("tool-") ||
+      part.type.startsWith("data-"),
+  );
+}
+
 export function CaseChat({
   caseId,
   values,
@@ -83,7 +94,12 @@ export function CaseChat({
   const busy = status === "submitted" || status === "streaming";
   const length = codePointLength(draft);
   const canSend = !expired && !busy && draft.trim().length > 0 && length <= CHAT_MESSAGE_MAX;
-  const lastMessage = messages.at(-1);
+  // A provider failure after /api/chat answered 200 arrives as start -> error: useChat has then
+  // already opened an empty assistant message. Hide it so the user's message is the last one and
+  // gets "Nie wysłano" + Ponów (AC-35); regenerate() drops it before resending (T27 F1).
+  const visibleMessages =
+    status === "error" && isEmptyReply(messages.at(-1)) ? messages.slice(0, -1) : messages;
+  const lastMessage = visibleMessages.at(-1);
   const failedId = status === "error" && lastMessage?.role === "user" ? lastMessage.id : null;
   const errorText =
     error instanceof ApiError
@@ -119,7 +135,7 @@ export function CaseChat({
         <h2 className="sr-only">{CONVERSATION_LABEL}</h2>
         <Conversation className="min-h-[50dvh] flex-1 lg:min-h-0">
           <ConversationContent scrollLabel={CONVERSATION_LABEL}>
-            {messages.map((message) => (
+            {visibleMessages.map((message) => (
               <ChatMessage
                 key={message.id}
                 message={message}

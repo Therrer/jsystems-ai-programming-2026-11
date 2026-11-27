@@ -25,6 +25,9 @@ const fixture = (name: string): Fixture => JSON.parse(readFileSync(path.join(REC
 const DECISION_200 = fixture("app-decision-200.json");
 const CHAT_200 = fixture("app-chat-200-stream.json");
 const CHAT_404 = fixture("app-chat-404-unknown.json");
+// Real capture (T27 F1): the provider failed after /api/chat had answered 200, so the stream is
+// start -> error -> [DONE]. This is how provider 401/402/429/5xx and timeouts reach the browser.
+const CHAT_PROVIDER_ERROR = fixture("app-chat-200-stream-provider-error.json");
 const AI_FAILURE_502 = fixture("app-cases-502-invalid-key.json");
 // Derived: the real 502 AI_UNAVAILABLE recording (app-cases-502-invalid-key.json) served on the chat route.
 // Only the endpoint differs from the recording; status and body are kept.
@@ -217,6 +220,27 @@ describe("CaseChat: sending messages", () => {
 });
 
 describe("CaseChat: failures", () => {
+  it("marks the question as not sent when the provider fails after the stream started, and Ponów resends it (T27 F1)", async () => {
+    const user = userEvent.setup();
+    const mock = stubChat(CHAT_PROVIDER_ERROR, CHAT_200);
+    renderChat();
+
+    await user.type(chatInput(), "Jaki model zgłosiłem?{Enter}");
+    expect(await screen.findByText(FAILED_MESSAGE)).toBeTruthy();
+    expect(screen.getByRole("button", { name: RETRY_BUTTON })).toBeTruthy();
+    // The empty assistant message opened by the start chunk must not stay in the conversation.
+    expect(screen.getAllByTestId("chat-message").map((m) => m.getAttribute("data-role"))).toEqual(["assistant", "user"]);
+
+    await user.click(screen.getByRole("button", { name: RETRY_BUTTON }));
+
+    await waitFor(() => expect(mock).toHaveBeenCalledTimes(2));
+    const [first, second] = chatBodies(mock) as [Record<string, unknown>, Record<string, unknown>];
+    expect(second.trigger).toBe("regenerate-message");
+    expect((second.message as { id: string }).id).toBe((first.message as { id: string }).id);
+    await waitFor(() => expect(screen.getByText(ANSWER, { exact: false })).toBeTruthy());
+    expect(screen.queryByText(FAILED_MESSAGE)).toBeNull();
+  });
+
   it("marks the question as not sent on a chat 502 and resends the same message on Ponów", async () => {
     const user = userEvent.setup();
     const mock = stubChat(CHAT_502, CHAT_200);
