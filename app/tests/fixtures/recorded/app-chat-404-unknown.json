@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "name": "chat-404-unknown",
+    "capturedAt": "2026-11-26T12:28:45.434Z",
+    "task": "T21 app capture",
+    "label": "ok",
+    "durationMs": 20
+  },
+  "request": {
+    "method": "POST",
+    "url": "/api/chat",
+    "body": {
+      "id": "<unknown uuid>",
+      "message": {
+        "id": "capture-u1",
+        "role": "user",
+        "parts": [
+          {
+            "type": "text",
+            "text": "Jaki model zgłosiłem?"
+          }
+        ]
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "application/json",
+      "keep-alive": "timeout=5",
+      "transfer-encoding": "chunked",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding"
+    },
+    "body": {
+      "error": {
+        "code": "CASE_NOT_FOUND",
+        "messagePl": "Sesja wygasła. Rozpocznij nową sprawę."
+      }
+    }
+  }
+}

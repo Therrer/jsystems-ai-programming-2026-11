@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "name": "cases-502-invalid-key",
+    "capturedAt": "2026-11-26T12:30:13.951Z",
+    "task": "T21 app capture",
+    "label": "invalid-key",
+    "durationMs": 713
+  },
+  "request": {
+    "method": "POST",
+    "url": "/api/cases",
+    "body": {
+      "multipart": {
+        "caseType": "return",
+        "category": "laptop",
+        "modelName": "Lenovo ThinkPad E14",
+        "purchaseDate": "2026-11-21",
+        "description": "",
+        "image": "laptop-2.webp (image/webp, real example photo)"
+      }
+    }
+  },
+  "response": {
+    "status": 502,
+    "headers": {
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "application/json",
+      "keep-alive": "timeout=5",
+      "transfer-encoding": "chunked",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding"
+    },
+    "body": {
+      "error": {
+        "code": "AI_UNAVAILABLE",
+        "messagePl": "Nie udało się przygotować decyzji. Spróbuj ponownie za chwilę."
+      }
+    }
+  }
+}

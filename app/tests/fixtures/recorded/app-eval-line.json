@@ -1,0 +1,84 @@
+{
+  "meta": {
+    "name": "app-eval-line",
+    "task": "T21 app capture",
+    "source": "EVAL_LOG_PATH line written by the production build during capture-app.mjs ok (POST /api/cases, laptop-2.webp return)",
+    "capturedAt": "2026-11-26T12:28:43.209Z"
+  },
+  "line": {
+    "ts": "2026-11-26T12:28:43.209Z",
+    "caseId": "f6218e7f-dd72-43a1-b4e9-55d5b36bef05",
+    "caseType": "return",
+    "category": "laptop",
+    "lunaStatus": "ok",
+    "luna": [
+      {
+        "key": "device_visible",
+        "value": true,
+        "certainty": 1,
+        "status": "answered"
+      },
+      {
+        "key": "image_usable",
+        "value": true,
+        "certainty": 0.83,
+        "status": "answered"
+      },
+      {
+        "key": "category",
+        "value": "laptop",
+        "certainty": 1,
+        "status": "answered"
+      },
+      {
+        "key": "damage_visible",
+        "value": false,
+        "certainty": 0.93,
+        "status": "answered"
+      },
+      {
+        "key": "condition",
+        "value": "clear_signs_of_use",
+        "certainty": 0.64,
+        "status": "low_confidence"
+      },
+      {
+        "key": "resellable_as_new",
+        "value": false,
+        "certainty": 1,
+        "status": "answered"
+      }
+    ],
+    "analysis": {
+      "imageUsable": true,
+      "deviceVisible": true,
+      "categoryMatch": "match",
+      "detectedCategory": "laptop",
+      "damageVisible": true,
+      "likelyCause": null,
+      "signsOfUse": "clear",
+      "resellableAsNew": false
+    },
+    "agreement": {
+      "device_visible": "agree",
+      "image_usable": "agree",
+      "damage_visible": "disagree",
+      "resellable_as_new": "agree",
+      "category": "agree",
+      "likely_cause": "n/a",
+      "condition": "agree"
+    },
+    "outcome": "ACCEPT",
+    "appliedGuardrails": [],
+    "latencyMs": {
+      "luna": 1343,
+      "vision": 19282,
+      "decision": 11836
+    },
+    "models": {
+      "vision": "openai/gpt-6-luna",
+      "decision": "openai/gpt-6-luna",
+      "decisions": "openai/gpt-6-luna-decisions"
+    }
+  }
+}

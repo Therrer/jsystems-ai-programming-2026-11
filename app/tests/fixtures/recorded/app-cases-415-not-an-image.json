@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "name": "cases-415-not-an-image",
+    "capturedAt": "2026-11-26T12:28:45.397Z",
+    "task": "T21 app capture",
+    "label": "ok",
+    "durationMs": 22
+  },
+  "request": {
+    "method": "POST",
+    "url": "/api/cases",
+    "body": {
+      "multipart": {
+        "caseType": "return",
+        "category": "laptop",
+        "modelName": "Lenovo ThinkPad E14",
+        "purchaseDate": "2026-11-21",
+        "description": "",
+        "image": "PRD.md (image/jpeg, real example photo)"
+      }
+    }
+  },
+  "response": {
+    "status": 415,
+    "headers": {
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "application/json",
+      "keep-alive": "timeout=5",
+      "transfer-encoding": "chunked",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding"
+    },
+    "body": {
+      "error": {
+        "code": "UNSUPPORTED_IMAGE",
+        "messagePl": "Dozwolone formaty: JPG, PNG, WEBP",
+        "fieldErrors": {
+          "image": "UNSUPPORTED_IMAGE"
+        }
+      }
+    }
+  }
+}

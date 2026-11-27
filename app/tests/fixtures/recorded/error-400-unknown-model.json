@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "name": "error-400-unknown-model",
+    "capturedAt": "2026-11-26T10:27:48.596Z",
+    "note": "Unknown model id.",
+    "images": [],
+    "durationMs": 23,
+    "edits": [
+      "Derived edit: OpenRouter account id replaced with <redacted-account-id> (privacy); shape unchanged."
+    ]
+  },
+  "request": {
+    "method": "POST",
+    "url": "https://openrouter.ai/api/v1/chat/completions",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer <redacted>"
+    },
+    "body": {
+      "model": "openai/model-that-does-not-exist-hsdc",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Odpowiedz: OK"
+        }
+      ],
+      "max_tokens": 50,
+      "provider": {
+        "data_collection": "deny",
+        "zdr": true
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "access-control-allow-origin": "*",
+      "access-control-expose-headers": "WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,x-openrouter-subscription-passthrough,anthropic-ratelimit-unified-status,Retry-After,cf-ray",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "cf-ray": "a60833e4cf99bf62-WAW",
+      "connection": "keep-alive",
+      "content-type": "application/json",
+      "date": "Thu, 26 Nov 2026 10:27:48 GMT",
+      "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\")",
+      "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
+      "server": "cloudflare",
+      "transfer-encoding": "chunked",
+      "x-content-type-options": "nosniff",
+      "x-generation-id": "gen-1795688868-q3a5G7a0zC17m6wNjs4t",
+      "x-openrouter-error-origin": "client",
+      "x-openrouter-release": "api;6974da3e-2d30-4253-9b9d-763143ceef81"
+    },
+    "body": {
+      "error": {
+        "message": "openai/model-that-does-not-exist-hsdc is not a valid model ID",
+        "code": 400
+      },
+      "user_id": "<redacted-account-id>"
+    }
+  }
+}

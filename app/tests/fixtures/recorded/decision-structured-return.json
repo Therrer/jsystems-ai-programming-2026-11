@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "name": "decision-structured-return",
+    "capturedAt": "2026-11-26T10:27:39.273Z",
+    "note": "Decision-shaped structured output (ADR-001 §4 draft) with a short policy excerpt; text only.",
+    "images": [],
+    "durationMs": 2622
+  },
+  "request": {
+    "method": "POST",
+    "url": "https://openrouter.ai/api/v1/chat/completions",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer <redacted>"
+    },
+    "body": {
+      "model": "openai/gpt-6-luna",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You prepare a preliminary return decision for Example Electronics Store. Use only the policy below and cite rule IDs. Customer-facing text in Polish. Never state money amounts.\n<policy>R-2.1 The customer may return goods within 14 calendar days from receipt. R-3.2 Goods without signs of use beyond checking them: full refund. R-3.3 Goods with signs of use: refund reduced by diminished value, amount set by the service team.</policy>"
+        },
+        {
+          "role": "user",
+          "content": "Case: return; laptop Lenovo ThinkPad E14; purchase date 2026-11-21; today 2026-11-26; timing: within (R-2.1); no forced outcome. Image analysis: imageUsable true, deviceVisible true, categoryMatch match, damageVisible false, signsOfUse none, resellableAsNew true, observationsPl \"Laptop bez widocznych śladów użytkowania.\""
+        }
+      ],
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "name": "Decision",
+          "strict": true,
+          "schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "outcome",
+              "remedy",
+              "citedRuleIds",
+              "photoSummaryPl",
+              "justificationPl",
+              "nextStepsPl",
+              "clarifyingQuestionsPl"
+            ],
+            "properties": {
+              "outcome": {
+                "type": "string",
+                "enum": [
+                  "ACCEPT",
+                  "REJECT",
+                  "MANUAL_REVIEW"
+                ]
+              },
+              "remedy": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "FULL_REFUND",
+                  "REDUCED_REFUND",
+                  "REPAIR",
+                  "REPLACEMENT",
+                  "PRICE_REDUCTION_OR_REFUND",
+                  "PAID_REPAIR",
+                  null
+                ]
+              },
+              "citedRuleIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[RC]-\\d+\\.\\d+$"
+                }
+              },
+              "photoSummaryPl": {
+                "type": "string"
+              },
+              "justificationPl": {
+                "type": "string"
+              },
+              "nextStepsPl": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "clarifyingQuestionsPl": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "reasoning": {
+        "effort": "low"
+      },
+      "max_tokens": 4000,
+      "provider": {
+        "data_collection": "deny",
+        "zdr": true,
+        "require_parameters": true
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "access-control-allow-origin": "*",
+      "access-control-expose-headers": "WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,x-openrouter-subscription-passthrough,anthropic-ratelimit-unified-status,Retry-After,cf-ray",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "cf-ray": "a60833aa7bf64c6b-WAW",
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "application/json",
+      "date": "Thu, 26 Nov 2026 10:27:41 GMT",
+      "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\")",
+      "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
+      "server": "cloudflare",
+      "transfer-encoding": "chunked",
+      "x-content-type-options": "nosniff",
+      "x-generation-id": "gen-1795688859-X0DXFGi6fBbbUjZnDz2j",
+      "x-openrouter-release": "api;6974da3e-2d30-4253-9b9d-763143ceef81"
+    },
+    "body": {
+      "id": "gen-1795688859-X0DXFGi6fBbbUjZnDz2j",
+      "object": "chat.completion",
+      "created": 1795688859,
+      "model": "openai/gpt-6-luna",
+      "provider": "Azure",
+      "system_fingerprint": null,
+      "service_tier": "default",
+      "choices": [
+        {
+          "index": 0,
+          "logprobs": null,
+          "finish_reason": "stop",
+          "native_finish_reason": "completed",
+          "message": {
+            "role": "assistant",
+            "content": "{\"outcome\":\"ACCEPT\",\"remedy\":\"FULL_REFUND\",\"citedRuleIds\":[\"R-2.1\",\"R-3.2\"],\"photoSummaryPl\":\"Laptop bez widocznych śladów użytkowania.\",\"justificationPl\":\"Zwrot mieści się w terminie określonym w R-2.1. Na podstawie widocznego stanu urządzenia nie stwierdzono śladów użytkowania wykraczających poza sprawdzenie, dlatego przysługuje pełny zwrot zgodnie z R-3.2.\",\"nextStepsPl\":[\"Przekaż laptop do obsługi zwrotu w celu weryfikacji stanu i sfinalizowania zwrotu.\"],\"clarifyingQuestionsPl\":[]}",
+            "refusal": null,
+            "reasoning": null
+          }
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 340,
+        "completion_tokens": 161,
+        "total_tokens": 501,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0001145,
+          "upstream_inference_prompt_cost": 0.000034,
+          "upstream_inference_completions_cost": 0.0000805
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      }
+    }
+  }
+}

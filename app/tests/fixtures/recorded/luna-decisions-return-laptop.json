@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "name": "luna-decisions-return-laptop",
+    "capturedAt": "2026-11-26T10:27:29.686Z",
+    "note": "Return case, laptop photo, category laptop (synthetic course example image).",
+    "images": [
+      {
+        "file": "images/laptop-1.webp",
+        "bytes": 126282,
+        "width": 1482,
+        "height": 1536,
+        "sha256": "bf4138bc914af90e6b6edafd42254dfc7b4838e95f3ea7ec1e4dd38733bdac70"
+      }
+    ],
+    "durationMs": 1690
+  },
+  "request": {
+    "method": "POST",
+    "url": "https://openrouter.ai/api/alpha/decisions",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer <redacted>"
+    },
+    "body": {
+      "model": "openai/gpt-6-luna-decisions",
+      "state": [
+        "Case type: return. Selected category: laptop. Model: Lenovo ThinkPad E14. Today: 2026-11-26.",
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "<image:images/laptop-1.webp sha256=bf4138bc914af90e6b6edafd42254dfc7b4838e95f3ea7ec1e4dd38733bdac70>"
+          }
+        }
+      ],
+      "questions": {
+        "device_visible": {
+          "type": "noul",
+          "instructions": "An electronic device is clearly the main subject of the photo."
+        },
+        "image_usable": {
+          "type": "noul",
+          "instructions": "The photo is sharp, well lit and complete enough to judge the device's condition."
+        },
+        "category": {
+          "type": "choice",
+          "instructions": "Which kind of device is shown?",
+          "criteria": {
+            "smartphone": "A smartphone",
+            "laptop": "A laptop computer",
+            "tablet": "A tablet",
+            "tv": "A television",
+            "audio": "Headphones or other audio device",
+            "wearable": "A smartwatch or wearable",
+            "camera": "A photo camera",
+            "small_appliance": "A small home or kitchen appliance",
+            "other_device": "Some other electronic device",
+            "no_device": "No electronic device is visible"
+          }
+        },
+        "damage_visible": {
+          "type": "noul",
+          "instructions": "Any physical damage or defect is visible on the device."
+        },
+        "condition": {
+          "type": "choice",
+          "instructions": "Condition of the device for resale.",
+          "criteria": {
+            "like_new": "No signs of use",
+            "light_signs_of_use": "Light signs of use",
+            "clear_signs_of_use": "Clear signs of use",
+            "damaged": "Physically damaged"
+          }
+        },
+        "resellable_as_new": {
+          "type": "noul",
+          "instructions": "The device could be resold as new without refurbishment."
+        }
+      },
+      "provider": {
+        "data_collection": "deny",
+        "zdr": true
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "access-control-allow-origin": "*",
+      "access-control-expose-headers": "WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,x-openrouter-subscription-passthrough,anthropic-ratelimit-unified-status,Retry-After,cf-ray",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "cf-ray": "a608336eae0b4c6b-WAW",
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "application/json",
+      "date": "Thu, 26 Nov 2026 10:27:31 GMT",
+      "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\")",
+      "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
+      "server": "cloudflare",
+      "transfer-encoding": "chunked",
+      "x-content-type-options": "nosniff",
+      "x-generation-id": "gen-dec-1795688849-8UjtFnwVtj16izRQlYA4",
+      "x-provider-name": "Azure"
+    },
+    "body": {
+      "model": "openai/gpt-6-luna-decisions-20261006",
+      "answers": {
+        "device_visible": {
+          "type": "noul",
+          "noul": 1
+        },
+        "image_usable": {
+          "type": "noul",
+          "noul": 0.21
+        },
+        "category": {
+          "type": "choice",
+          "choice": "laptop",
+          "probabilities": {
+            "smartphone": 0,
+            "laptop": 1,
+            "tablet": 0,
+            "tv": 0,
+            "audio": 0,
+            "wearable": 0,
+            "camera": 0,
+            "small_appliance": 0,
+            "other_device": 0,
+            "no_device": 0
+          },
+          "confidence": 1
+        },
+        "damage_visible": {
+          "type": "noul",
+          "noul": 1
+        },
+        "condition": {
+          "type": "choice",
+          "choice": "damaged",
+          "probabilities": {
+            "like_new": 0,
+            "light_signs_of_use": 0,
+            "clear_signs_of_use": 0,
+            "damaged": 1
+          },
+          "confidence": 1
+        },
+        "resellable_as_new": {
+          "type": "noul",
+          "noul": 0
+        }
+      },
+      "usage": {
+        "input_tokens": 3243,
+        "output_tokens": 0,
+        "cost": 0,
+        "is_byok": true,
+        "cost_details": {
+          "upstream_inference_cost": 0.0003243,
+          "upstream_inference_prompt_cost": 0.0003243,
+          "upstream_inference_completions_cost": 0
+        }
+      },
+      "id": "gen-dec-1795688849-8UjtFnwVtj16izRQlYA4",
+      "provider": "Azure"
+    }
+  }
+}

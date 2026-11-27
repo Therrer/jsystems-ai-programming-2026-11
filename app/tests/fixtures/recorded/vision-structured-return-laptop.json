@@ -1,0 +1,305 @@
+{
+  "meta": {
+    "name": "vision-structured-return-laptop",
+    "capturedAt": "2026-11-26T10:27:32.408Z",
+    "note": "Draft ImageAnalysis schema (ADR-001 §4); final-prompt re-capture happens in T21.",
+    "images": [
+      {
+        "file": "images/laptop-1.webp",
+        "bytes": 126282,
+        "width": 1482,
+        "height": 1536,
+        "sha256": "bf4138bc914af90e6b6edafd42254dfc7b4838e95f3ea7ec1e4dd38733bdac70"
+      }
+    ],
+    "durationMs": 6865
+  },
+  "request": {
+    "method": "POST",
+    "url": "https://openrouter.ai/api/v1/chat/completions",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer <redacted>"
+    },
+    "body": {
+      "model": "openai/gpt-6-luna",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You analyse one product photo for a return case. Describe only what is visible. Never decide accept or reject. Write observationsPl in Polish."
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Form: case type return; category laptop; model Lenovo ThinkPad E14. Luna signals: [{\"key\":\"category\",\"value\":\"laptop\",\"certainty\":0.9,\"status\":\"answered\"}]"
+            },
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "<image:images/laptop-1.webp sha256=bf4138bc914af90e6b6edafd42254dfc7b4838e95f3ea7ec1e4dd38733bdac70>"
+              }
+            }
+          ]
+        }
+      ],
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "name": "ImageAnalysis",
+          "strict": true,
+          "schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "imageUsable",
+              "unusableReason",
+              "deviceVisible",
+              "detectedCategory",
+              "categoryMatch",
+              "damageVisible",
+              "damage",
+              "likelyCause",
+              "signsOfUse",
+              "resellableAsNew",
+              "observationsPl",
+              "lunaVerification"
+            ],
+            "properties": {
+              "imageUsable": {
+                "type": "boolean"
+              },
+              "unusableReason": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "blurry",
+                  "too_dark",
+                  "device_not_visible",
+                  "partial_view",
+                  "other",
+                  null
+                ]
+              },
+              "deviceVisible": {
+                "type": "boolean"
+              },
+              "detectedCategory": {
+                "type": "string",
+                "enum": [
+                  "smartphone",
+                  "laptop",
+                  "tablet",
+                  "tv",
+                  "audio",
+                  "wearable",
+                  "camera",
+                  "small_appliance",
+                  "other_device",
+                  "no_device"
+                ]
+              },
+              "categoryMatch": {
+                "type": "string",
+                "enum": [
+                  "match",
+                  "mismatch",
+                  "unsure"
+                ]
+              },
+              "damageVisible": {
+                "type": "boolean"
+              },
+              "damage": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "location",
+                    "severity"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "severity": {
+                      "type": "string",
+                      "enum": [
+                        "minor",
+                        "moderate",
+                        "severe"
+                      ]
+                    }
+                  }
+                }
+              },
+              "likelyCause": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "manufacturing_defect",
+                  "impact",
+                  "liquid",
+                  "heat",
+                  "normal_wear",
+                  "unclear",
+                  null
+                ]
+              },
+              "signsOfUse": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "none",
+                  "light",
+                  "clear",
+                  "heavy",
+                  null
+                ]
+              },
+              "resellableAsNew": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "observationsPl": {
+                "type": "string"
+              },
+              "lunaVerification": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "key",
+                    "agrees",
+                    "notePl"
+                  ],
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "agrees": {
+                      "type": "string",
+                      "enum": [
+                        "yes",
+                        "no",
+                        "partly"
+                      ]
+                    },
+                    "notePl": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "reasoning": {
+        "effort": "low"
+      },
+      "max_tokens": 4000,
+      "provider": {
+        "data_collection": "deny",
+        "zdr": true,
+        "require_parameters": true
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "access-control-allow-origin": "*",
+      "access-control-expose-headers": "WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,x-openrouter-subscription-passthrough,anthropic-ratelimit-unified-status,Retry-After,cf-ray",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "cf-ray": "a608337f9fc04c6b-WAW",
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-type": "application/json",
+      "date": "Thu, 26 Nov 2026 10:27:35 GMT",
+      "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\")",
+      "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
+      "server": "cloudflare",
+      "transfer-encoding": "chunked",
+      "x-content-type-options": "nosniff",
+      "x-generation-id": "gen-1795688852-G4gfJafKnVvsDeAAcYjJ",
+      "x-openrouter-release": "api;6974da3e-2d30-4253-9b9d-763143ceef81"
+    },
+    "body": {
+      "id": "gen-1795688852-G4gfJafKnVvsDeAAcYjJ",
+      "object": "chat.completion",
+      "created": 1795688852,
+      "model": "openai/gpt-6-luna",
+      "provider": "Azure",
+      "system_fingerprint": null,
+      "service_tier": "default",
+      "choices": [
+        {
+          "index": 0,
+          "logprobs": null,
+          "finish_reason": "stop",
+          "native_finish_reason": "completed",
+          "message": {
+            "role": "assistant",
+            "content": "{\"imageUsable\":true,\"unusableReason\":null,\"deviceVisible\":true,\"detectedCategory\":\"laptop\",\"categoryMatch\":\"match\",\"damageVisible\":true,\"damage\":[{\"type\":\"pęknięcie ekranu, promieniście rozchodzące się rysy\",\"location\":\"lewa dolna część wyświetlacza\",\"severity\":\"severe\"}],\"likelyCause\":\"impact\",\"signsOfUse\":\"clear\",\"resellableAsNew\":false,\"observationsPl\":\"Widoczny laptop z uruchomionym ekranem systemu Windows. W lewej dolnej części wyświetlacza znajduje się rozległe, promieniście rozchodzące się pęknięcie. Klawiatura jest częściowo przykryta przezroczystą osłoną lub folią. Marka i model nie są możliwe do potwierdzenia na podstawie zdjęcia.\",\"lunaVerification\":[{\"key\":\"category\",\"agrees\":\"yes\",\"notePl\":\"Na zdjęciu widoczny jest laptop.\"}]}",
+            "refusal": null,
+            "reasoning": "**Evaluating laptop condition**\n\nI need to provide an exact JSON output regarding the laptop described. The image features a silver, Surface-like laptop with a keyboard cover, but there seems to be a severe issue with a cracked screen resembling a spiderweb. Even though it’s technically usable, the damage impacts its value. I’ll note signs of protective film on the keyboard cover. Since it's not resellable, I’ll categorize it under \"Luna\" and make observations for clarity.",
+            "reasoning_details": [
+              {
+                "type": "reasoning.summary",
+                "summary": "**Evaluating laptop condition**\n\nI need to provide an exact JSON output regarding the laptop described. The image features a silver, Surface-like laptop with a keyboard cover, but there seems to be a severe issue with a cracked screen resembling a spiderweb. Even though it’s technically usable, the damage impacts its value. I’ll note signs of protective film on the keyboard cover. Since it's not resellable, I’ll categorize it under \"Luna\" and make observations for clarity.",
+                "format": "azure-openai-responses-v1",
+                "index": 0
+              },
+              {
+                "type": "reasoning.encrypted",
+                "data": "gAAAAABrCAmZYHNuhfmvTstkfWNaeLEjz7bE1OziLSeS9Ip77hozs4QY4iNRR0qLPXoGj3SH-4GuFoJpGA_wIw-RJwv8biH4lQnfuiNb-SbvnQ6nOv5D59c31khSeRSXL6VuokmcmTmPpcPcakOzbrFt7LFwyu0ghgSRkJ2qdTsqbwCBPHlwWYnKo6VC34RkwyY9ReZZF3qsjBeXdyGEW7HxYWcu1QQ0svgMXJaskpT3u9J0qkeaSE3YvGEoWuTWjKsobXh8VxmoL8o6is5DTkL5P-eBl8_fppYWo4fvPwVS0Y4u2aNhnrV1AM7bwjcV1Sg0zezI8sI4KGN3Czl6ZjROC9b9CbcusBgM2w84jTPv6Ry8M0KJoea_V2Lq47au30PU5H_kbsJW9kGEzKXedV7yL4AsVOWpKVB4yitcHKJnRBaC3xZxsfN_OhRIHcIAxaMe23vl8pIW8ILV20PwX50bDExTvEUbcf8KC6W1skX2em3b__i3fNvLF9ka-aG-ElxJ3DkNwHpuungRC1y-TzYDF3mapV_cbmD1BhblDfnFiI5x6OlDzeJNN-ICHceoFv06AXU4Xy1flsafB5-5NK5FUgUWwPwXITR-v703_FoKoFz2ZgWR-GJDMVJj2zu2CxAyitJeCtJlmETWQaz1dTjd9PBBx56zkhV_jQibEj145s1LhQeRgk_J7BL0XsX1gcVHdBlXZFgTAO4RY0yPZ_tuhHDIKLX36qqSLiR1sNEGp4G9FibSwb743eFLO8aUUUuBi3asaRyBXqgHaux9CGH5Nf33pRNg8HdC6thiJUJ2PJbgbQm92BDXb3A3_kMmFH-6I2Ub4nr27DWigqlujREWiYkRSTCBZ-nhFpQbpcq97SlegAu-HkXsmAwfY2SYh1Q9P7rUcocPLunNy2-7KTQIqMzx2uNQEahqk9-qoDOD_yO8jqRXH2MFJ19RExb2cnnjHS2S5p58IUZvC_nrhN8s_azre-gkZBKn429i70wHkF1qSETPsDa8vmdSVOhJx9pM6w9MRVLGWC--2nlsxCg6zn99BvFPibPcvWYtKM2vjuHMur7KCkgpt2d5llF8Gv9r26WVXVD6KEFPV-yXN19OH1HeWXyOyNN3mzz3M7R6x-zUYv3q1E8iwNW6gYdULJ4Y2fQSE8mhqO0I7V9bDCGxg0Zs7ixZy1xFWidlyq8_BWzMmWx6Dt793IDcM7LuBOH6mHV6o2GcqODaMm0T5zrsX0rKXcBtCFPgnlowSwKAReicuzqayrME_z2nD8SWSoNYZHdUKwTlbr9vqAiSuwH8AHDxUaoPu5kkZefi3bK7Q1UjUZieelY29DULrk39KBKN0Zo6qzY84kWugGRKnAPMTamJn4MZku9S0QW6zc9ideccQ69C8wg30gFTl77MEXi2AhGSatfoWxI-Vzq8Xb3alfhzyVt5eXILRVR9ODTnMmHP9zZHBjqNpnihKPRvTne63V65ElRJO20JWqkwXUhQnGlwZcQ3_3HITxJt8KhaXPzLQgLQy73yropI9ad5bw1CYjvLviJBeZARXpM3Itwep16Ke8Pw4RKtZbaEYmiNfLn7ibjl8htZ0wVmvH8bXrdNndXVnwJ1hIBSWJmanetmUs-9SPMpfOlo0vmaek3qb2XMWtOOpmce9xecXRixnVwIpYXgIxQ4Wlr7We6hKbEfmohjv29uhtSyNAjvavNoSB3_CnEUp7NA4qemwkbcGCnbKHu_STC5JICk_7zBbpeyk5hu5SbN9OVKr9GlKYhjU4FcuwGPsY8EpOWiUpxfhNs1qVI0xBXdaVw5FP3ydjgvHnjcqdThLft-LDQbdJDx0gGok4KHTEJ__cLvxnVR2iy5fq2pbLzjzZh0Hd1kuptd6itFSRvXJE8V27HWBKpPnE0Ia-gC_l923b6g3lkPljw8YuDyEXMKOetyYGLSwvb2ctZd1FegqgjN9DiuQvzsCFd_NJPq8vBSRgQXEvMjfRYpwmZ7NekE1JHrhlrVOZ04_WwypW55RAnZWSbp_79UZPL4NigWMPfd67tJbh7RAPIgBu-7hftJb2XKRAn1lFPVZ14Vq1qDlAGREkfGI09GBImCTB3NF-AxmgQwNFQOYDidNjgxWpo8fz-Apit6BEvWDxvY8y8YP5airtupDkDquV68MPBBnSvAZGQGYcvUbedPztcFajjZzs3p4M2nmE6wT8xrFAvRXzWP_RjQ0Fw03iYIzRaYWJ8tHfWLydiGeYXkAeVxs3nvsXRzDjNa6jU-I90ZB0w3v0WX9UwGp4JY2vPI7zTC5Ko=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC02LWx1bmEtMjAyNjA5MjJ8YXp1cmUifQ",
+                "format": "azure-openai-responses-v1",
+                "id": "rs_032511751aa2c9b5016b080997a1788190982ee423e8641264",
+                "index": 1
+              }
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 3090,
+        "completion_tokens": 297,
+        "total_tokens": 3387,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 3087,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000534675,
+          "upstream_inference_prompt_cost": 0.000386175,
+          "upstream_inference_completions_cost": 0.0001485
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 70,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "meta": {
+    "name": "models-facts",
+    "capturedAt": "2026-11-26T10:27:29.663Z",
+    "note": "GET https://openrouter.ai/api/v1/models; data[] filtered verbatim to openai/gpt-6-luna, openai/gpt-6-luna-decisions; total 42",
+    "durationMs": 1198
+  },
+  "response": {
+    "status": 200,
+    "entries": [
+      {
+        "id": "openai/gpt-6-luna",
+        "canonical_slug": "openai/gpt-6-luna-20260922",
+        "hugging_face_id": null,
+        "name": "OpenAI: GPT-6 Luna",
+        "created": 1790100786,
+        "description": "GPT-6 Luna is the fast, cost-efficient model in OpenAI's GPT-6 series, positioned below GPT-6 Sol. It is suited for high-volume and latency-sensitive workloads such as chat, classification, and lightweight agentic...",
+        "context_length": 1050000,
+        "architecture": {
+          "modality": "text+image+file->text",
+          "input_modalities": [
+            "file",
+            "image",
+            "text"
+          ],
+          "output_modalities": [
+            "text"
+          ],
+          "tokenizer": "GPT",
+          "instruct_type": null
+        },
+        "pricing": {
+          "prompt": "0.0000001",
+          "completion": "0.0000005",
+          "web_search": "0.01",
+          "input_cache_read": "0.00000001",
+          "input_cache_write": "0.000000125",
+          "overrides": [
+            {
+              "min_prompt_tokens": 272000,
+              "prompt": "0.0000002",
+              "completion": "0.00000075",
+              "input_cache_read": "0.00000002",
+              "input_cache_write": "0.00000025"
+            }
+          ]
+        },
+        "top_provider": {
+          "context_length": 1050000,
+          "max_completion_tokens": 128000,
+          "is_moderated": true
+        },
+        "per_request_limits": null,
+        "supported_parameters": [
+          "include_reasoning",
+          "max_completion_tokens",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "seed",
+          "structured_outputs",
+          "tool_choice",
+          "tools",
+          "verbosity"
+        ],
+        "default_parameters": {
+          "temperature": null,
+          "top_p": null,
+          "top_k": null,
+          "frequency_penalty": null,
+          "presence_penalty": null,
+          "repetition_penalty": null
+        },
+        "supported_voices": null,
+        "knowledge_cutoff": null,
+        "expiration_date": null,
+        "links": {
+          "details": "/api/v1/models/openai/gpt-6-luna-20260922/endpoints"
+        },
+        "endpoints": [
+          "/api/v1/chat/completions",
+          "/api/v1/completions",
+          "/api/v1/messages",
+          "/api/v1/responses"
+        ],
+        "benchmarks": {
+          "design_arena": [],
+          "artificial_analysis": {
+            "intelligence_index": 27.9,
+            "coding_index": null,
+            "agentic_index": null,
+            "finance_and_accounting_index": 33.9,
+            "strategy_and_ops_index": 43.2,
+            "legal_index": 32.2,
+            "healthcare_and_medical_index": 34.8,
+            "engineering_index": 33.3,
+            "economics_index": 34.5,
+            "cyber_index": 52.7,
+            "openness_index": null,
+            "multilingual_index": null,
+            "decision_index": 75.7
+          }
+        },
+        "reasoning": {
+          "mandatory": false,
+          "default_enabled": true,
+          "supported_efforts": [
+            "max",
+            "xhigh",
+            "high",
+            "medium",
+            "low",
+            "none"
+          ],
+          "default_effort": "medium"
+        }
+      }
+    ]
+  },
+  "decisionsModels": {
+    "note": "GET ?output_modalities=decisions, ids only",
+    "ids": [
+      "google/gemini-decision-1",
+      "typesafe/jev-1.14",
+      "openai/gpt-6-luna-decisions",
+      "~typesafe/jev-latest",
+      "typesafe/jev-1.13"
+    ]
+  }
+}
