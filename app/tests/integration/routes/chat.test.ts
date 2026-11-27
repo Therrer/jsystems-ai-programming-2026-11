@@ -143,6 +143,16 @@ describe("POST /api/chat: accepted message", () => {
     expect(store.tryLock(caseId)).toBe(true);
   });
 
+  it("stores only type and text of each text part, never extra client fields (T27 F2)", async () => {
+    const { handler, store, caseId } = setup();
+    const message = { id: MSG_ID, role: "user", parts: [{ type: "text", text: "Pytanie", providerMetadata: { x: 1 }, state: "done" }] };
+
+    const res = await send(handler, caseId, message);
+
+    expect(res.status).toBe(200);
+    expect(store.get(caseId)?.messages.at(-1)?.parts).toEqual([{ type: "text", text: "Pytanie" }]);
+  });
+
   it("ignores client fields other than id, message and trigger (TD-203)", async () => {
     const { handler, calls, caseId } = setup();
 
@@ -173,6 +183,18 @@ describe("POST /api/chat: rejections before the lock", () => {
     expect(res.status).toBe(400);
     expect(await errorCode(res)).toBe("ATTACHMENTS_NOT_ALLOWED");
     expect(calls).toHaveLength(0);
+  });
+
+  it("rejects a text part whose text is not a string with 400 VALIDATION_ERROR (T27 F2)", async () => {
+    const { handler, calls, store, caseId } = setup();
+    const message = { id: MSG_ID, role: "user", parts: [{ type: "text", text: "a" }, { type: "text", text: {} }] };
+
+    const res = await send(handler, caseId, message);
+
+    expect(res.status).toBe(400);
+    expect(await errorCode(res)).toBe("VALIDATION_ERROR");
+    expect(calls).toHaveLength(0);
+    expect(store.get(caseId)?.messages.map((m) => m.id)).toEqual([FIRST_ID]);
   });
 
   it("rejects a whitespace-only message with 400 MESSAGE_LENGTH", async () => {

@@ -41,6 +41,11 @@ async function readBody(req: Request): Promise<{ id: string; message: RequestMes
   }
   const parsed = chatRequestSchema.safeParse(json);
   if (!parsed.success) throw new ValidationError({});
+  // A text part must carry string text (T27 F2): a malformed part would be stored and replayed into
+  // every later turn. Non-text parts are rejected later as ATTACHMENTS_NOT_ALLOWED (AC-36).
+  if (parsed.data.message.parts.some((part) => part.type === "text" && typeof part.text !== "string")) {
+    throw new ValidationError({});
+  }
   return { id: parsed.data.id, message: parsed.data.message };
 }
 
@@ -69,7 +74,8 @@ export function createChatHandler(deps: ChatHandlerDeps): (req: Request) => Prom
       userMessage = {
         id: message.id,
         role: "user",
-        parts: message.parts as CaseUIMessage["parts"],
+        // Only type and text are kept: extra client fields never reach the stored history (T27 F2).
+        parts: message.parts.map((part) => ({ type: "text" as const, text: String(part.text) })),
         metadata: { createdAt: new Date().toISOString() },
       };
       store.update(id, (c) => {
