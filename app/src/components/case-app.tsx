@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { AppHeader } from "@/components/app-header";
 import { CaseForm } from "@/components/case-form/case-form";
 import { CaseChat } from "@/components/case-chat/case-chat";
@@ -66,6 +66,21 @@ export function CaseApp() {
   const busyRef = useRef(false);
   const stopChatRef = useRef<(() => void) | null>(null);
   useBeforeUnload(isCaseOpen(state));
+
+  // A case created in step 1 whose decision step failed still holds the processed photo on the
+  // server. When the flow lets go of it (an edit or a fresh submit instead of Spróbuj ponownie),
+  // delete it instead of waiting for the TTL (T27 F5). Retry and the chat keep the same id.
+  const heldCaseRef = useRef<string | null>(null);
+  useEffect(() => {
+    const inChat = state.kind === "chat" || state.kind === "expired";
+    const held =
+      (state.kind === "failed" && state.failedStep === 2) || (state.kind === "processing" && state.step === 2)
+        ? state.caseId
+        : null;
+    const previous = heldCaseRef.current;
+    if (previous !== null && previous !== held && !inChat) void deleteCase(previous);
+    heldCaseRef.current = held;
+  }, [state]);
 
   const registerStop = useCallback((stop: (() => void) | null) => {
     stopChatRef.current = stop;

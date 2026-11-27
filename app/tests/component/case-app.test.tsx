@@ -167,6 +167,34 @@ describe("CaseApp: failures", () => {
     expect(calls(fetchMock)).toEqual(["POST /api/cases", `POST ${DECISION_URL}`, `POST ${DECISION_URL}`]);
   });
 
+  it("deletes the case left by a failed decision step once the customer edits the form and resubmits (T27 F5)", async () => {
+    const user = userEvent.setup();
+    let decisionCalls = 0;
+    const fetchMock = stubApi({
+      decision: () => {
+        decisionCalls += 1;
+        return respond(decisionCalls === 1 ? DECISION_502 : DECISION_200);
+      },
+    });
+    render(<CaseApp />);
+
+    await submitValidReturn(user);
+    expect(await screen.findByText(API_ERROR_MESSAGES.AI_UNAVAILABLE)).toBeTruthy();
+
+    await user.type(screen.getByRole("textbox", { name: MODEL_NAME_LABEL }), " Gen 5");
+    await waitFor(() => expect(calls(fetchMock)).toContain(`DELETE ${DELETE_URL}`));
+
+    await user.click(screen.getByRole("button", { name: SUBMIT_BUTTON }));
+    await screen.findByTestId("decision-block");
+    expect(calls(fetchMock)).toEqual([
+      "POST /api/cases",
+      `POST ${DECISION_URL}`,
+      `DELETE ${DELETE_URL}`,
+      "POST /api/cases",
+      `POST ${DECISION_URL}`,
+    ]);
+  });
+
   it("aborts a request that runs past 90 seconds and shows the AI timeout banner", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
