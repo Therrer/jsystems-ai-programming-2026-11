@@ -653,8 +653,8 @@ Run these in order from the repository root, then verify each step. Check flags 
 1. **Prerequisites:** `node -v` must print ≥ 22. Use `nvm install 22` or an equivalent if it doesn't.
 2. **Empty the target:** move `app/README.md` to the scratchpad. `create-next-app` refuses any existing file.
 3. **Scaffold:** `npx create-next-app@latest app --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm --yes --disable-git`. Turbopack is the default; there is no `--turbopack` flag. The generated `tsconfig.json` already has `"strict": true`.
-4. **Restore the README:** merge the course README content back into `app/README.md`, followed by the generated run instructions.
-5. **Keep `app/AGENTS.md`:** it is generated with Next.js agent rules. Add `app/CLAUDE.md` containing the single line `@AGENTS.md`, because Claude Code reads `CLAUDE.md` while OpenCode and Codex read `AGENTS.md`. Skip this if create-next-app already generated an equivalent `CLAUDE.md`. Add a short "Project rules" section that points to `docs/PRD.md` and `docs/ADR/`, names the commands from step 9, and gives the `src/server` vs `src/components` boundary.
+4. **Restore the README:** merge the course README content back into `app/README.md`, followed by the generated run instructions. *Done in T02 (`0500e6f`); extended with env, layout, tests and QA in T26.*
+5. **Keep `app/AGENTS.md`:** it is generated with Next.js agent rules. Add `app/CLAUDE.md` containing the single line `@AGENTS.md`, because Claude Code reads `CLAUDE.md` while OpenCode and Codex read `AGENTS.md`. Skip this if create-next-app already generated an equivalent `CLAUDE.md`. Add a short "Project rules" section that points to `docs/PRD.md` and `docs/ADR/`, names the commands from step 9, and gives the `src/server` vs `src/components` boundary. *Done in T02; `app/CLAUDE.md` holds the single line `@AGENTS.md`; `eval:report` and the manual QA rule added in T26.*
 6. **Tighten TypeScript:** add `noUncheckedIndexedAccess`, `noImplicitOverride` and `noFallthroughCasesInSwitch` to `app/tsconfig.json`.
 7. **shadcn:**
    - Run `npx shadcn@latest init -t next -b radix` with `app/` as the working directory.
@@ -697,6 +697,12 @@ Run these in order from the repository root, then verify each step. Check flags 
   - 400 for an unknown model, with `user_id` redacted;
   - client timeout `TimeoutError` (code 23);
   - unreachable host `TypeError: fetch failed`.
-- The exact shadcn AI registry component names after the AI Elements migration need checking on implementation day.
+- **Resolved (T03, `db89ed2`):** the AI Elements chat components are vendored as `src/components/ai-elements/` `conversation`, `message`, `prompt-input` and `shimmer`, so they can be edited like our own code.
+- **Verified during implementation and acceptance (T22–T25, 2026-11-26/27):**
+  - `use-stick-to-bottom` 1.1.6: `StickToBottom.Content` passes only `scrollClassName` to its scroll container. The keyboard focus and the name the container needs (TAC-003-04) are set through `useStickToBottomContext().scrollRef` (`6fe23ef`).
+  - Real latency from submit to the first chat message: 13–21 s across 13 manual cases (AC-28 limit 90 s). Vision and decision each take about 10–11 s; Luna about 1.3 s.
+  - Real upstream cost: about $0.0015 per case (Luna + vision + decision) and $0.0001–0.0004 per chat turn; one E2E run costs about $0.014 (T24) and the T25 manual pass $0.0146 (35 calls).
+  - Luna returned `ok` in every manual case (13/13). No corrective retry or template fallback occurred (`appliedGuardrails` empty), so those paths remain covered by integration tests only.
+  - A restart with an invalid key gives Luna `401` → `unavailable` and vision `AI_UNAVAILABLE` → our API `502`, as designed (ADR-002 §5.6).
 - `experimental_evaluate` and `/api/alpha/decisions` are alpha and may change. Any change stays inside `server/ai/luna`.
 - The four "assumption" decisions in section 1 can be changed by the user before implementation without affecting the rest of the architecture.
