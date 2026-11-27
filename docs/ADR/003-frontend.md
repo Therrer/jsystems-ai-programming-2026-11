@@ -471,3 +471,5 @@ Component tests use Vitest + Testing Library (jsdom), with `fetch` and `useChat`
 ### Known trade-off
 
 White text on the brand orange `#E67741` CTA has a contrast ratio below 4.5:1 for 16 px/600 text. The brand reference is followed as AC-45 requires, and the issue is recorded for the design owner. Changing it is a brand decision, not an implementation one.
+
+The same applies to white text on `brand.buttonGreen` `#358F42` (4.07:1), used by the **Nowa sprawa** button and the case-type badge. T25 measured both with axe-core; the human accepted them as brand trade-offs on 2026-11-27 (QA finding F-08).

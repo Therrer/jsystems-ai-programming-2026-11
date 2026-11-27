@@ -65,9 +65,9 @@ Result key: ✅ pass · ⚠️ pass with a finding (see §4) · ❌ fail. Screen
 | F-03 | moderate | Chat screen has no level-one heading; the fix then exposed `heading-order` | **Fixed** in `6fe23ef` (sr-only h1 and h2) |
 | F-04 | minor | Summary shows the "Opis" label with no value for a return without description; the photo appears to sit under "Opis" | **Fixed** in `6fe23ef` |
 | F-05 | minor | Photo zoom dialog: the close "×" is hard to see on top of the photo | Open, cosmetic |
-| F-06 | question | With no case type selected, Description already shows "(opcjonalnie)" and the return hint. AC-07 defines this only for "Zwrot". | Open, needs an H/PRD decision |
+| F-06 | question | With no case type selected, Description already shows "(opcjonalnie)" and the return hint. AC-07 defines this only for "Zwrot". | **Accepted** by H (2026-11-27): Zwrot is the lenient default until a type is chosen; the required-field check still applies on submit |
 | F-07 | minor | Expired session: the failed message still offers "Ponów", which can never succeed; at 360 px the expired notice is below the fold and the view does not scroll to it | Open |
-| F-08 | brand | White on `#358F42` (Nowa sprawa button, case-type badge) is 4.07:1 and white on the `#E67741` CTA is 2.96:1. These are design-guideline tokens; ADR-003 records the orange one as a known trade-off, but not the green one. | Open, brand decision for H/design owner |
+| F-08 | brand | White on `#358F42` (Nowa sprawa button, case-type badge) is 4.07:1 and white on the `#E67741` CTA is 2.96:1. These are design-guideline tokens; ADR-003 records the orange one as a known trade-off, but not the green one. | **Accepted** by H (2026-11-27) as a brand trade-off, recorded in ADR-003 *Known trade-off* |
 
 ## 5. Gaps and limits
 
@@ -80,4 +80,4 @@ Result key: ✅ pass · ⚠️ pass with a finding (see §4) · ❌ fail. Screen
 
 ## 6. Verdict
 
-Every PRD flow §4.1–4.7 and every AC group passed manual testing on the real stack, apart from the open items in §4 and §5. The serious accessibility defects found in this pass are fixed and re-verified. **T25 waits for H** to run Lighthouse, check the OpenRouter activity count, and decide F-06 and F-08.
+Every PRD flow §4.1–4.7 and every AC group passed manual testing on the real stack, apart from the open items in §4 and §5. The serious accessibility defects found in this pass are fixed and re-verified. F-06 and F-08 were accepted by H on 2026-11-27. **T25 waits only for H's Lighthouse run and the OpenRouter activity count.**
