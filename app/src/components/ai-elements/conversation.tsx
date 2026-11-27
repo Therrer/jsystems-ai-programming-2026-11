@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import type { UIMessage } from "ai";
 import { ArrowDownIcon, DownloadIcon } from "lucide-react";
 import type { ComponentProps } from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 
 export type ConversationProps = ComponentProps<typeof StickToBottom>;
@@ -26,13 +26,33 @@ export type ConversationContentProps = ComponentProps<
 
 export const ConversationContent = ({
   className,
+  scrollLabel,
   ...props
-}: ConversationContentProps) => (
-  <StickToBottom.Content
-    className={cn("flex flex-col gap-8 p-4", className)}
-    {...props}
-  />
+}: ConversationContentProps & { scrollLabel?: string }) => (
+  <>
+    <ScrollAreaName label={scrollLabel} />
+    <StickToBottom.Content
+      className={cn("flex flex-col gap-8 p-4", className)}
+      {...props}
+    />
+  </>
 );
+
+/**
+ * StickToBottom.Content does not forward props to its scroll container, so the container gets
+ * tabindex and a name here: a scrollable region must be reachable by keyboard (axe
+ * scrollable-region-focusable, ADR-003 TAC-003-02/TAC-003-04).
+ */
+const ScrollAreaName = ({ label }: { label?: string }) => {
+  const { scrollRef } = useStickToBottomContext();
+  useEffect(() => {
+    const scroller = scrollRef.current;
+    if (!scroller || !label) return;
+    scroller.tabIndex = 0;
+    scroller.setAttribute("aria-label", label);
+  }, [scrollRef, label]);
+  return null;
+};
 
 export type ConversationEmptyStateProps = ComponentProps<"div"> & {
   title?: string;

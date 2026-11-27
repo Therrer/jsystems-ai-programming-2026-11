@@ -55,6 +55,13 @@ describe("CaseSummaryPanel", () => {
     expect(within(region).getByText("a".repeat(200))).toBeTruthy();
   });
 
+  it("omits the description row when the optional return description is empty", () => {
+    render(<CaseSummaryPanel values={{ ...VALUES, description: "" }} previewUrl={null} />);
+
+    const region = screen.getByRole("region", { name: CASE_SUMMARY_LABEL });
+    expect(within(region).queryByText("Opis")).toBeNull();
+  });
+
   it("shows no description toggle for a description of 200 characters or fewer", () => {
     render(<CaseSummaryPanel values={VALUES} previewUrl={null} />);
 

@@ -7,7 +7,15 @@ import { CaseChat, type CaseChatProps } from "@/components/case-chat/case-chat";
 import type { FormValues } from "@/lib/client/case-flow";
 import type { CaseUIMessage } from "@/lib/shared/schemas/api";
 import { CHAT_MESSAGE_MAX } from "@/lib/shared/schemas/api";
-import { NEW_CASE_BUTTON, MESSAGE_FIELD, SEND_BUTTON, FAILED_MESSAGE, RETRY_BUTTON } from "@/lib/shared/strings/chat";
+import {
+  NEW_CASE_BUTTON,
+  MESSAGE_FIELD,
+  SEND_BUTTON,
+  FAILED_MESSAGE,
+  RETRY_BUTTON,
+  CHAT_HEADING,
+  CONVERSATION_LABEL,
+} from "@/lib/shared/strings/chat";
 import { API_ERROR_MESSAGES, DECISION_NOTICE } from "@/lib/shared/strings/common";
 
 const RECORDED = path.resolve(import.meta.dirname, "../../fixtures/recorded");
@@ -108,6 +116,51 @@ describe("CaseChat: first message", () => {
     expect(message.querySelector("time")?.textContent).toBe("13:28");
     expect(screen.getByTestId("decision-block").getAttribute("data-outcome")).toBe("ACCEPT");
     expect(screen.getByRole("note").textContent).toBe(DECISION_NOTICE);
+  });
+});
+
+describe("CaseChat: accessibility (TAC-003-04, T25 axe findings)", () => {
+  it("names the chat screen with a level-one heading", () => {
+    renderChat();
+
+    expect(screen.getByRole("heading", { level: 1, name: CHAT_HEADING })).toBeTruthy();
+  });
+
+  it("never skips a heading level from the page heading down to the message sections (axe heading-order)", () => {
+    renderChat();
+
+    const levels = screen.getAllByRole("heading").map((heading) => Number(heading.tagName.slice(1)));
+    expect(levels[0]).toBe(1);
+    levels.slice(1).forEach((level, index) => {
+      expect(level - (levels[index] as number)).toBeLessThanOrEqual(1);
+    });
+  });
+
+  it("makes the conversation scroll area keyboard-focusable and names it", () => {
+    renderChat();
+
+    const scroller = screen.getByLabelText(CONVERSATION_LABEL);
+    expect(scroller.getAttribute("tabindex")).toBe("0");
+    expect(scroller.contains(screen.getByTestId("chat-message"))).toBe(true);
+  });
+
+  it("does not put the user's message on the brand-green background (2.39:1 contrast with body text)", async () => {
+    stubChat(CHAT_200);
+    const user = userEvent.setup();
+    renderChat();
+
+    await user.type(chatInput(), "Jaki model zgłosiłem?");
+    await user.click(sendButton());
+
+    const userMessage = await screen.findByText("Jaki model zgłosiłem?");
+    const bubble = userMessage.closest("[class*='is-user']") ?? userMessage.parentElement;
+    let node: HTMLElement | null = userMessage;
+    const classes: string[] = [];
+    while (node && node !== bubble?.parentElement) {
+      classes.push(String(node.className));
+      node = node.parentElement;
+    }
+    expect(classes.join(" ")).not.toMatch(/(^|\s|:)bg-secondary(\s|$)/);
   });
 });
 

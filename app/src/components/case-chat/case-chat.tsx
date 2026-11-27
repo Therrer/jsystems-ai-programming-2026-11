@@ -22,6 +22,8 @@ import { decisionSchema } from "@/lib/shared/schemas/ai";
 import { CHAT_MESSAGE_MAX, type CaseUIMessage } from "@/lib/shared/schemas/api";
 import {
   ASSISTANT_TYPING,
+  CHAT_HEADING,
+  CONVERSATION_LABEL,
   MESSAGE_FIELD,
   MESSAGE_PLACEHOLDER,
   SEND_BUTTON,
@@ -108,13 +110,15 @@ export function CaseChat({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row lg:items-start">
+      <h1 className="sr-only">{CHAT_HEADING}</h1>
       <aside className="shrink-0 lg:sticky lg:top-4 lg:w-80">
         <CaseSummaryPanel values={values} previewUrl={previewUrl} />
       </aside>
 
       <section className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 lg:h-[calc(100dvh-8rem)]">
+        <h2 className="sr-only">{CONVERSATION_LABEL}</h2>
         <Conversation className="min-h-[50dvh] flex-1 lg:min-h-0">
-          <ConversationContent>
+          <ConversationContent scrollLabel={CONVERSATION_LABEL}>
             {messages.map((message) => (
               <ChatMessage
                 key={message.id}

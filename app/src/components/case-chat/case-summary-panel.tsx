@@ -65,22 +65,24 @@ export function CaseSummaryPanel({ values, previewUrl }: { values: FormValues; p
         <dt className="text-xs text-muted-foreground">{PURCHASE_DATE_FIELD}</dt>
         <dd>{formatPurchaseDate(values.purchaseDate)}</dd>
       </div>
-      <div>
-        <dt className="text-xs text-muted-foreground">{DESCRIPTION_FIELD}</dt>
-        <dd className="whitespace-pre-wrap break-words">{shownDescription}</dd>
-        {isLong ? (
-          <Button
-            type="button"
-            variant="link"
-            size="sm"
-            className="h-auto p-0"
-            aria-expanded={expanded}
-            onClick={() => setExpanded((value) => !value)}
-          >
-            {expanded ? SHOW_LESS : SHOW_MORE}
-          </Button>
-        ) : null}
-      </div>
+      {values.description.length > 0 ? (
+        <div>
+          <dt className="text-xs text-muted-foreground">{DESCRIPTION_FIELD}</dt>
+          <dd className="whitespace-pre-wrap break-words">{shownDescription}</dd>
+          {isLong ? (
+            <Button
+              type="button"
+              variant="link"
+              size="sm"
+              className="h-auto p-0"
+              aria-expanded={expanded}
+              onClick={() => setExpanded((value) => !value)}
+            >
+              {expanded ? SHOW_LESS : SHOW_MORE}
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
       {previewUrl ? (
         <div>
           <dt className="sr-only">{PHOTO_FIELD}</dt>

@@ -29,3 +29,8 @@ export const MESSAGE_FIELD = "Wiadomość";
 export const SEND_BUTTON = "Wyślij";
 export const ASSISTANT_TYPING = "Asystent pisze…";
 export const MESSAGE_PLACEHOLDER = "Zadaj pytanie o sprawę…";
+
+// Accessibility names for the chat screen (TAC-003-04): the visually hidden page heading and the
+// keyboard-focusable conversation scroll area.
+export const CHAT_HEADING = "Rozmowa o sprawie";
+export const CONVERSATION_LABEL = "Rozmowa";
